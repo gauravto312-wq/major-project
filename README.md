@@ -49,18 +49,6 @@
 ## Pre-Seeded Accounts
 
 Upon first launch, the database automatically seeds default records:
-
-### 1. Administrator Account
-- **Email**: `admin@bizsahayak.in`
-- **Password**: `Admin@123456`
-- **Role**: `ROLE_ADMIN`
-
-### 2. Verified Business Demo Account
-- **Email**: `business@demo.com`
-- **Password**: `Demo@123456`
-- **Role**: `ROLE_BUSINESS`
-- **Business Profile**: Apex Food Products & Agro Enterprises (`VERIFIED`)
-
 ---
 
 ## Running the Application
