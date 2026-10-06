@@ -56,7 +56,11 @@ public class SecurityConfig {
                         // Public Authentication & Docs
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/actuator/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        // Actuator Management Endpoints Restricted to ADMIN
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
                         
                         // Public Read-Only Schemes & Tenders & Categories
                         .requestMatchers(HttpMethod.GET, "/api/schemes/**").permitAll()

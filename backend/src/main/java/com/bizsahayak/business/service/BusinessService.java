@@ -91,6 +91,9 @@ public class BusinessService {
                 "Verification Submitted",
                 "Your business profile has been submitted for admin verification. We will review your application shortly.",
                 "VERIFICATION",
+                "BUSINESS",
+                profile.getId(),
+                "/business/profile",
                 "/business/profile"
         );
 
@@ -131,10 +134,13 @@ public class BusinessService {
 
         notificationService.createNotification(
                 profile.getUser(),
-                "Business Verification Approved! 🎉",
+                "Your business verification has been approved.",
                 "Congratulations! Your business profile has been verified. You now have full access to personalized scheme & tender recommendations.",
-                "VERIFICATION",
-                "/business/dashboard"
+                "VERIFICATION_APPROVED",
+                "BUSINESS",
+                saved.getId(),
+                "/business/profile",
+                "/business/profile"
         );
 
         auditLogService.logAction(
@@ -165,9 +171,12 @@ public class BusinessService {
 
         notificationService.createNotification(
                 profile.getUser(),
-                "Business Verification Rejected",
+                "Your business verification requires attention.",
                 "Your business verification application was rejected. Reason: " + reason,
-                "VERIFICATION",
+                "VERIFICATION_REJECTED",
+                "BUSINESS",
+                saved.getId(),
+                "/business/profile",
                 "/business/profile"
         );
 
@@ -199,9 +208,12 @@ public class BusinessService {
 
         notificationService.createNotification(
                 profile.getUser(),
-                "Action Required: Business Profile Correction Needed",
+                "Your business verification requires corrections.",
                 "Please update your business profile or documents as requested by admin. Details: " + reason,
-                "VERIFICATION",
+                "CORRECTION_REQUIRED",
+                "BUSINESS",
+                saved.getId(),
+                "/business/profile",
                 "/business/profile"
         );
 

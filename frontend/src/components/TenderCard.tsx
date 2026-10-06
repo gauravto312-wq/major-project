@@ -32,7 +32,7 @@ export const TenderCard: React.FC<TenderCardProps> = ({ tender, isSavedInitial =
         if (onSaveToggle) onSaveToggle(true);
       }
     } catch (err) {
-      // silent
+      console.error('Failed to update tender bookmark:', err);
     } finally {
       setLoading(false);
     }
@@ -46,17 +46,17 @@ export const TenderCard: React.FC<TenderCardProps> = ({ tender, isSavedInitial =
   };
 
   return (
-    <div className="card flex flex-col justify-between p-5 hover:border-indigo-300 hover:shadow-lg transition-all group">
+    <article className="card flex flex-col justify-between p-5 bg-white/95 border border-slate-200 shadow-gov hover:border-[#6F9ED8] hover:shadow-gov-md transition-all group">
       <div>
         {/* Top Badges & Bookmark */}
         <div className="flex justify-between items-start gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-mono font-bold px-2 py-0.5 rounded-md">
+            <span className="bg-[#E5EEF9] text-[#173B72] border border-[#C7DBF2] text-[11px] font-mono font-bold px-2 py-0.5 rounded-md">
               {tender.tenderNumber}
             </span>
             {tender.featured && (
-              <span className="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Featured
+              <span className="bg-[#FEF7E6] text-[#B7791F] border border-[#F8D88E] text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#C89B3C]" /> Featured
               </span>
             )}
             <Badge status={tender.status} />
@@ -64,29 +64,31 @@ export const TenderCard: React.FC<TenderCardProps> = ({ tender, isSavedInitial =
 
           {isAuthenticated && (
             <button
+              type="button"
               onClick={handleSaveClick}
               disabled={loading}
+              aria-label={isSaved ? 'Remove Bookmark' : 'Save Tender'}
               className={`p-1.5 rounded-lg border transition-colors ${
                 isSaved
-                  ? 'bg-amber-50 border-amber-300 text-amber-600'
-                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-700'
+                  ? 'bg-amber-50 border-[#C89B3C] text-[#C89B3C]'
+                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-[#173B72] hover:border-slate-300'
               }`}
               title={isSaved ? 'Remove Bookmark' : 'Save Tender'}
             >
-              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-amber-500' : ''}`} />
+              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-[#C89B3C]' : ''}`} />
             </button>
           )}
         </div>
 
         {/* Title */}
-        <Link to={`/tenders/${tender.slug}`} className="block group-hover:text-indigo-600 transition-colors">
-          <h3 className="text-base font-bold text-slate-900 leading-snug line-clamp-2 mb-2">
+        <Link to={`/tenders/${tender.slug || tender.id}`} className="block group-hover:text-[#173B72] transition-colors">
+          <h3 className="text-base font-bold text-[#172033] leading-snug line-clamp-2 mb-2 group-hover:text-[#173B72]">
             {tender.title}
           </h3>
         </Link>
 
-        {/* Organization & Location */}
-        <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 mb-3">
+        {/* Authority & State */}
+        <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-[#5E6B7D] mb-3">
           <span className="flex items-center gap-1">
             <Building2 className="w-3.5 h-3.5 text-slate-400" />
             <span className="truncate max-w-[160px]">{tender.organization}</span>
@@ -97,38 +99,36 @@ export const TenderCard: React.FC<TenderCardProps> = ({ tender, isSavedInitial =
           </span>
         </div>
 
-        {/* Estimated Tender Value */}
-        <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200/70 mb-3 flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Est. Value</span>
-          <span className="text-sm font-bold text-slate-900 flex items-center">
-            <IndianRupee className="w-3.5 h-3.5 text-emerald-600 mr-0.5" />
+        {/* Estimated Value */}
+        <div className="bg-[#F5F7FA] border border-slate-200/80 rounded-xl p-3 mb-3 flex items-center justify-between text-xs">
+          <span className="text-[#5E6B7D] font-medium">Estimated Value:</span>
+          <span className="font-bold text-[#173B72] flex items-center font-mono text-sm">
+            <IndianRupee className="w-3.5 h-3.5 mr-0.5" />
             {formatCurrency(tender.estimatedValue)}
           </span>
         </div>
 
         {/* Description */}
-        <p className="text-xs text-slate-600 line-clamp-2 mb-4 leading-relaxed">
+        <p className="text-xs text-[#5E6B7D] line-clamp-2 mb-4 leading-relaxed">
           {tender.description}
         </p>
       </div>
 
       {/* Footer Meta */}
       <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1 text-slate-500">
+        <div className="flex items-center gap-1 text-[#5E6B7D]">
           <Calendar className="w-3.5 h-3.5 text-slate-400" />
-          <span>
-            {tender.closingDate ? `Closing: ${new Date(tender.closingDate).toLocaleDateString()}` : 'Active Procurement'}
-          </span>
+          <span>Due: {tender.closingDate ? new Date(tender.closingDate).toLocaleDateString() : 'Open / Ongoing'}</span>
         </div>
 
         <Link
-          to={`/tenders/${tender.slug}`}
-          className="text-indigo-600 font-bold hover:text-indigo-800 flex items-center gap-1 text-xs"
+          to={`/tenders/${tender.slug || tender.id}`}
+          className="text-[#173B72] font-bold hover:text-[#2456A6] flex items-center gap-1 text-xs"
         >
-          View Tender
+          View Notice
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
-    </div>
+    </article>
   );
 };

@@ -2,37 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --gov-deep: #173B72;
+  --gov-royal: #2456A6;
+  --gov-soft: #6F9ED8;
+  --gov-white: #FFFFFF;
+  --gov-bg: #F5F7FA;
+  --gov-cream: #F3E8D0;
+  --gov-sand: #D8C39A;
+  --gov-dark: #172033;
+  --gov-muted: #5E6B7D;
+  --gov-gold: #C89B3C;
+  --gov-green: #1B8354;
+  --gov-amber: #B7791F;
+  --gov-red: #C53030;
+  --gov-border: #E2E8F0;
+}
+
 @layer base {
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #172033;
+    background-color: #F5F7FA;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: #F3E8D0;
+    color: #173B72;
   }
 }
 
-/* Custom UI Utility Styles */
+/* ========================================================
+   BIZSAHAYAK GOVERNMENT DESIGN SYSTEM COMPONENTS
+   ======================================================== */
+
+/* Button Hierarchy (WCAG Compliant Focus, Hover & Active States) */
 .btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply bg-[#173B72] hover:bg-[#2456A6] text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 border border-[#173B72] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#173B72] focus:ring-offset-1;
 }
 
 .btn-secondary {
-  @apply bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply bg-white hover:bg-[#F5F7FA] text-[#173B72] border border-[#173B72]/40 hover:border-[#173B72] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#173B72]/40 focus:ring-offset-1;
+}
+
+.btn-accent {
+  @apply bg-[#C89B3C] hover:bg-[#B7882D] text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 border border-[#C89B3C] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#C89B3C] focus:ring-offset-1;
 }
 
 .btn-success {
-  @apply bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2;
+  @apply bg-[#1B8354] hover:bg-[#156B43] text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 border border-[#1B8354] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#1B8354] focus:ring-offset-1;
 }
 
 .btn-danger {
-  @apply bg-rose-600 hover:bg-rose-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2;
+  @apply bg-[#C53030] hover:bg-[#A82525] text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] inline-flex items-center justify-center gap-2 border border-[#C53030] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#C53030] focus:ring-offset-1;
 }
 
+/* Government Card Surface */
 .card {
-  @apply bg-white rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden;
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-[#6F9ED8]/60 transition-all duration-200 overflow-hidden;
 }
 
+.card-heritage {
+  @apply bg-gradient-to-b from-white/95 to-[#F5F7FA]/90 backdrop-blur-sm rounded-2xl border border-[#D8C39A]/50 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden;
+}
+
+/* Forms & Input Icon System */
 .input-field {
-  @apply w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-sm;
+  @apply w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-[#172033] placeholder-[#5E6B7D]/60 focus:outline-none focus:ring-2 focus:ring-[#2456A6]/20 focus:border-[#173B72] transition-all text-sm;
+}
+
+/* Explicit and guaranteed padding when input has icons */
+.input-field.has-left-icon,
+.has-left-icon,
+.pl-icon {
+  padding-left: 2.75rem !important; /* 44px ensures text starts well past 12px-14px icon */
+}
+
+.input-field.has-right-icon,
+.has-right-icon,
+.pr-icon {
+  padding-right: 2.75rem !important; /* 44px ensures text doesn't collide with right button */
+}
+
+.input-leading-icon {
+  @apply absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.input-trailing-btn {
+  @apply absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-[#173B72] transition-colors focus:outline-none focus:ring-2 focus:ring-[#173B72] rounded cursor-pointer;
 }
 
 .label-field {
-  @apply block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5;
+  @apply block text-xs font-bold text-[#173B72] uppercase tracking-wider mb-1.5;
+}
+
+/* Continuous Architectural Atmosphere */
+.vidhan-atmosphere {
+  position: relative;
+  background-color: transparent;
 }

@@ -5,7 +5,43 @@ import { BusinessProfile } from '../../types';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Alert } from '../../components/Alert';
 import { Badge } from '../../components/Badge';
-import { Building2, Save, Send, CheckCircle2 } from 'lucide-react';
+import { Building2, Save, Send, CheckCircle2, ShieldCheck } from 'lucide-react';
+
+const INDIAN_STATES = [
+  'Uttar Pradesh',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttarakhand',
+  'West Bengal',
+  'Delhi (NCT)',
+  'Jammu & Kashmir',
+  'Ladakh',
+  'Chandigarh',
+  'Puducherry',
+];
 
 export const BusinessProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -88,25 +124,26 @@ export const BusinessProfilePage: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading business profile..." />;
+    return <LoadingSpinner message="Loading enterprise profile metrics..." />;
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-gov">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-slate-900">Business Profile</h1>
+            <h1 className="text-2xl font-black text-[#172033]">Enterprise Profile</h1>
             {profile && <Badge status={profile.verificationStatus} />}
           </div>
-          <p className="text-xs text-slate-500">Provide accurate enterprise metrics for customized scheme recommendations</p>
+          <p className="text-xs text-[#5E6B7D]">Provide accurate enterprise metrics for customized scheme recommendations</p>
         </div>
 
         {profile && (profile.verificationStatus === 'NOT_SUBMITTED' || profile.verificationStatus === 'CORRECTION_REQUIRED') && (
           <button
+            type="button"
             onClick={handleSubmitVerification}
             disabled={saving}
-            className="btn-primary text-xs py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold"
+            className="btn-accent text-xs py-2.5 px-4 font-bold"
           >
             <Send className="w-4 h-4" />
             Submit for Admin Verification
@@ -116,18 +153,19 @@ export const BusinessProfilePage: React.FC = () => {
 
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-gov space-y-6">
         <div className="border-b border-slate-100 pb-4">
-          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-blue-600" />
+          <h2 className="text-base font-bold text-[#173B72] flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-[#173B72]" />
             Enterprise Identification
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Business / Enterprise Name *</label>
+            <label htmlFor="field-businessName" className="label-field">Business / Enterprise Name *</label>
             <input
+              id="field-businessName"
               type="text"
               name="businessName"
               required
@@ -139,8 +177,14 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Entity Type *</label>
-            <select name="businessType" value={formData.businessType || 'MSME'} onChange={handleChange} className="input-field">
+            <label htmlFor="field-businessType" className="label-field">Entity Type *</label>
+            <select
+              id="field-businessType"
+              name="businessType"
+              value={formData.businessType || 'MSME'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="MSME">MSME</option>
               <option value="Proprietorship">Proprietorship</option>
               <option value="Partnership">Partnership</option>
@@ -151,8 +195,14 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Industry Sector *</label>
-            <select name="industry" value={formData.industry || 'Food Processing'} onChange={handleChange} className="input-field">
+            <label htmlFor="field-industry" className="label-field">Industry Sector *</label>
+            <select
+              id="field-industry"
+              name="industry"
+              value={formData.industry || 'Food Processing'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="Food Processing">Food Processing & Agriculture</option>
               <option value="Manufacturing">Manufacturing & Engineering</option>
               <option value="IT Services">IT, Software & Technology</option>
@@ -164,20 +214,26 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">State *</label>
-            <select name="state" value={formData.state || 'Uttar Pradesh'} onChange={handleChange} className="input-field">
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
+            <label htmlFor="field-state" className="label-field">State *</label>
+            <select
+              id="field-state"
+              name="state"
+              value={formData.state || 'Uttar Pradesh'}
+              onChange={handleChange}
+              className="input-field"
+            >
+              {INDIAN_STATES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label className="label-field">District *</label>
+            <label htmlFor="field-district" className="label-field">District *</label>
             <input
+              id="field-district"
               type="text"
               name="district"
               required
@@ -189,8 +245,9 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Business Email</label>
+            <label htmlFor="field-businessEmail" className="label-field">Business Email</label>
             <input
+              id="field-businessEmail"
               type="email"
               name="businessEmail"
               value={formData.businessEmail || ''}
@@ -201,8 +258,9 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Contact Phone</label>
+            <label htmlFor="field-phone" className="label-field">Contact Phone</label>
             <input
+              id="field-phone"
               type="tel"
               name="phone"
               value={formData.phone || ''}
@@ -213,8 +271,9 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Website URL (Optional)</label>
+            <label htmlFor="field-website" className="label-field">Website URL (Optional)</label>
             <input
+              id="field-website"
               type="url"
               name="website"
               value={formData.website || ''}
@@ -226,13 +285,19 @@ export const BusinessProfilePage: React.FC = () => {
         </div>
 
         <div className="border-b border-slate-100 pb-4 pt-4">
-          <h2 className="text-base font-bold text-slate-900">Financial & Employee Metrics</h2>
+          <h2 className="text-base font-bold text-[#173B72]">Financial & Employee Metrics</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="label-field">Turnover Range</label>
-            <select name="turnoverRange" value={formData.turnoverRange || 'Below ₹10 Lakh'} onChange={handleChange} className="input-field">
+            <label htmlFor="field-turnover" className="label-field">Turnover Range</label>
+            <select
+              id="field-turnover"
+              name="turnoverRange"
+              value={formData.turnoverRange || 'Below ₹10 Lakh'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="Below ₹10 Lakh">Below ₹10 Lakh</option>
               <option value="₹10 Lakh - ₹50 Lakh">₹10 Lakh - ₹50 Lakh</option>
               <option value="₹50 Lakh - ₹1 Crore">₹50 Lakh - ₹1 Crore</option>
@@ -242,8 +307,14 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Investment Range</label>
-            <select name="investmentRange" value={formData.investmentRange || 'Below ₹10 Lakh'} onChange={handleChange} className="input-field">
+            <label htmlFor="field-investment" className="label-field">Investment Range</label>
+            <select
+              id="field-investment"
+              name="investmentRange"
+              value={formData.investmentRange || 'Below ₹10 Lakh'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="Below ₹10 Lakh">Below ₹10 Lakh</option>
               <option value="₹10 Lakh - ₹50 Lakh">₹10 Lakh - ₹50 Lakh</option>
               <option value="₹50 Lakh - ₹2 Crore">₹50 Lakh - ₹2 Crore</option>
@@ -252,8 +323,14 @@ export const BusinessProfilePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Employee Count</label>
-            <select name="employeeCount" value={formData.employeeCount || '1-10'} onChange={handleChange} className="input-field">
+            <label htmlFor="field-employeeCount" className="label-field">Employee Count</label>
+            <select
+              id="field-employeeCount"
+              name="employeeCount"
+              value={formData.employeeCount || '1-10'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="1-10">1-10 Employees</option>
               <option value="11-50">11-50 Employees</option>
               <option value="51-200">51-200 Employees</option>
@@ -263,8 +340,9 @@ export const BusinessProfilePage: React.FC = () => {
         </div>
 
         <div>
-          <label className="label-field">Business Description</label>
+          <label htmlFor="field-description" className="label-field">Business Description</label>
           <textarea
+            id="field-description"
             name="businessDescription"
             rows={3}
             value={formData.businessDescription || ''}
@@ -275,7 +353,7 @@ export const BusinessProfilePage: React.FC = () => {
         </div>
 
         <div className="pt-4 border-t border-slate-100 flex justify-end">
-          <button type="submit" disabled={saving} className="btn-primary text-sm py-2.5 px-6 font-bold">
+          <button type="submit" disabled={saving} className="btn-primary text-xs py-2.5 px-6 font-bold">
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save Profile Changes'}
           </button>

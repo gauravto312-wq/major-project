@@ -48,13 +48,60 @@ public class DataInitializer implements CommandLineRunner {
         seedGovernmentSources();
         seedSchemes();
         seedTenders();
+        cleanupOutdatedSchemeUrls();
+    }
+
+    private void cleanupOutdatedSchemeUrls() {
+        try {
+            schemeRepository.findBySlug("pmegp-employment-scheme").ifPresent(s -> {
+                s.setOfficialApplicationUrl("https://pmegp.msme.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("procurement-and-marketing-support-pms-scheme-for-msmes-govschmsme003").ifPresent(s -> {
+                s.setOfficialApplicationUrl("https://pms.dcmsme.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("stand-up-india-scheme-for-scst-and-women-entrepreneurs-govschstandup006").ifPresent(s -> {
+                s.setOfficialSourceUrl("https://www.standupmitra.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("pradhan-mantri-kisan-samman-nidhi-pm-kisan-govschagri007").ifPresent(s -> {
+                s.setOfficialSourceUrl("https://pmkisan.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("ayushman-bharat-pradhan-mantri-jan-arogya-yojana-pm-jay-govschhlth009").ifPresent(s -> {
+                s.setOfficialApplicationUrl("https://beneficiary.nha.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("indira-gandhi-national-old-age-pension-scheme-ignoaps-govschsenior013").ifPresent(s -> {
+                s.setOfficialSourceUrl("https://rural.gov.in");
+                s.setOfficialApplicationUrl("https://nsap.nic.in/nsap/");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("deendayal-disabled-rehabilitation-scheme-ddrs-govschdisab014").ifPresent(s -> {
+                s.setOfficialApplicationUrl("https://ngoportal.depwd.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("up-mukhyamantri-yuva-swarojgar-yojana-govschstate015").ifPresent(s -> {
+                s.setOfficialApplicationUrl("http://diupmsme.upsdc.gov.in");
+                schemeRepository.save(s);
+            });
+            schemeRepository.findBySlug("msme-technology-upgradation-tequp-pending").ifPresent(s -> {
+                s.setOfficialApplicationUrl("https://champions.gov.in");
+                schemeRepository.save(s);
+            });
+            log.info("✓ Ensured all scheme government URLs are cleaned and verified");
+        } catch (Exception e) {
+            log.warn("Scheme URL cleanup check: {}", e.getMessage());
+        }
     }
 
     private void migrateStatusColumns() {
         try {
+            jdbcTemplate.execute("ALTER TABLE users MODIFY COLUMN role VARCHAR(50) NOT NULL DEFAULT 'ROLE_CITIZEN'");
             jdbcTemplate.execute("ALTER TABLE schemes MODIFY COLUMN status VARCHAR(50) NOT NULL");
             jdbcTemplate.execute("ALTER TABLE tenders MODIFY COLUMN status VARCHAR(50) NOT NULL");
-            log.info("✓ Ensured schemes and tenders status columns are VARCHAR(50)");
+            log.info("✓ Ensured users role column, schemes and tenders status columns are VARCHAR(50)");
         } catch (Exception e) {
             log.warn("Status column modification check: {}", e.getMessage());
         }
@@ -187,7 +234,7 @@ public class DataInitializer implements CommandLineRunner {
                     .applicationProcess("Submit online application via KVIC e-portal. Application forwarded to District Industries Centre (DIC) / KVIC for scrutiny.")
                     .startDate(LocalDate.now().minusMonths(12))
                     .deadline(LocalDate.now().plusMonths(12))
-                    .officialApplicationUrl("https://www.kviconline.gov.in/pmegpeportal")
+                    .officialApplicationUrl("https://pmegp.msme.gov.in")
                     .officialSourceUrl("https://msme.gov.in")
                     .status(SchemeStatus.PUBLISHED)
                     .featured(true)

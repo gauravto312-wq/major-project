@@ -1,0 +1,255 @@
+-- BizSahayak Database Initialization & Migration DDL Script
+-- Target Database: MySQL 8.0+
+
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    role VARCHAR(30) NOT NULL DEFAULT 'ROLE_USER',
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    INDEX idx_users_email (email),
+    INDEX idx_users_role (role)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS categories (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    icon_name VARCHAR(50),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    INDEX idx_categories_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS business_profiles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    business_name VARCHAR(150) NOT NULL,
+    business_type VARCHAR(50) NOT NULL,
+    industry VARCHAR(100) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    district VARCHAR(50),
+    turnover VARCHAR(50),
+    investment VARCHAR(50),
+    employee_count INT,
+    description TEXT,
+    verification_status VARCHAR(30) NOT NULL DEFAULT 'NOT_SUBMITTED',
+    rejection_reason TEXT,
+    correction_message TEXT,
+    submitted_at DATETIME(6),
+    verified_at DATETIME(6),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_bp_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_bp_status (verification_status),
+    INDEX idx_bp_industry (industry),
+    INDEX idx_bp_state (state)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS business_documents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    business_profile_id BIGINT NOT NULL,
+    document_type VARCHAR(100) NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    file_storage_name VARCHAR(255) NOT NULL,
+    file_url VARCHAR(500) NOT NULL,
+    file_size BIGINT NOT NULL,
+    content_type VARCHAR(100) NOT NULL,
+    status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+    rejection_reason TEXT,
+    uploaded_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    verified_at DATETIME(6),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_bd_business FOREIGN KEY (business_profile_id) REFERENCES business_profiles(id) ON DELETE CASCADE,
+    INDEX idx_bd_business_id (business_profile_id),
+    INDEX idx_bd_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS government_sources (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    provider_code VARCHAR(50) NOT NULL UNIQUE,
+    source_type VARCHAR(30) NOT NULL,
+    content_type VARCHAR(30) NOT NULL,
+    base_url VARCHAR(500) NOT NULL,
+    api_url VARCHAR(500),
+    documentation_url VARCHAR(500),
+    terms_url VARCHAR(500),
+    authentication_type VARCHAR(50) NOT NULL DEFAULT 'NONE',
+    credential_reference VARCHAR(100),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    auto_publish BOOLEAN NOT NULL DEFAULT FALSE,
+    sync_frequency VARCHAR(50) DEFAULT '0 0 */6 * * *',
+    rate_limit_notes VARCHAR(255),
+    last_sync_at DATETIME(6),
+    last_sync_status VARCHAR(30),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    INDEX idx_gov_source_provider (provider_code),
+    INDEX idx_gov_source_active (active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS schemes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(200) NOT NULL UNIQUE,
+    description LONGTEXT NOT NULL,
+    short_description TEXT,
+    department VARCHAR(150),
+    ministry VARCHAR(150),
+    category_id BIGINT,
+    scheme_type VARCHAR(100),
+    state VARCHAR(100) DEFAULT 'All India',
+    district VARCHAR(100),
+    benefits LONGTEXT,
+    eligibility LONGTEXT,
+    required_documents TEXT,
+    application_process LONGTEXT,
+    start_date DATE,
+    deadline DATE,
+    official_application_url VARCHAR(500),
+    official_source_url VARCHAR(500),
+    status VARCHAR(30) NOT NULL DEFAULT 'DRAFT',
+    featured BOOLEAN NOT NULL DEFAULT FALSE,
+    min_investment DOUBLE,
+    max_investment DOUBLE,
+    min_turnover DOUBLE,
+    max_turnover DOUBLE,
+    target_industries VARCHAR(255),
+    target_business_types VARCHAR(255),
+    source_id BIGINT,
+    source_reference_id VARCHAR(100),
+    source_last_updated_at DATETIME(6),
+    last_synced_at DATETIME(6),
+    published_at DATETIME(6),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_schemes_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    CONSTRAINT fk_schemes_source FOREIGN KEY (source_id) REFERENCES government_sources(id) ON DELETE SET NULL,
+    INDEX idx_schemes_slug (slug),
+    INDEX idx_schemes_status (status),
+    INDEX idx_schemes_state (state),
+    INDEX idx_schemes_category (category_id),
+    INDEX idx_schemes_featured (featured),
+    INDEX idx_schemes_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS tenders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(200) NOT NULL UNIQUE,
+    tender_number VARCHAR(100),
+    organization VARCHAR(150) NOT NULL,
+    department VARCHAR(150),
+    category_id BIGINT,
+    description LONGTEXT NOT NULL,
+    location VARCHAR(100),
+    state VARCHAR(100) DEFAULT 'All India',
+    district VARCHAR(100),
+    estimated_value DOUBLE,
+    publish_date DATE,
+    closing_date DATE,
+    eligibility LONGTEXT,
+    required_documents TEXT,
+    requirements LONGTEXT,
+    official_tender_url VARCHAR(500),
+    official_source_url VARCHAR(500),
+    status VARCHAR(30) NOT NULL DEFAULT 'DRAFT',
+    featured BOOLEAN NOT NULL DEFAULT FALSE,
+    target_industries VARCHAR(255),
+    target_business_types VARCHAR(255),
+    source_id BIGINT,
+    source_reference_id VARCHAR(100),
+    source_last_updated_at DATETIME(6),
+    last_synced_at DATETIME(6),
+    published_at DATETIME(6),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_tenders_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    CONSTRAINT fk_tenders_source FOREIGN KEY (source_id) REFERENCES government_sources(id) ON DELETE SET NULL,
+    INDEX idx_tenders_slug (slug),
+    INDEX idx_tenders_status (status),
+    INDEX idx_tenders_state (state),
+    INDEX idx_tenders_closing (closing_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS saved_schemes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    scheme_id BIGINT NOT NULL,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_ss_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_ss_scheme FOREIGN KEY (scheme_id) REFERENCES schemes(id) ON DELETE CASCADE,
+    CONSTRAINT uk_ss_user_scheme UNIQUE (user_id, scheme_id),
+    INDEX idx_ss_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS saved_tenders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    tender_id BIGINT NOT NULL,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_st_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_st_tender FOREIGN KEY (tender_id) REFERENCES tenders(id) ON DELETE CASCADE,
+    CONSTRAINT uk_st_user_tender UNIQUE (user_id, tender_id),
+    INDEX idx_st_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_applications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    scheme_id BIGINT,
+    tender_id BIGINT,
+    title VARCHAR(200) NOT NULL,
+    application_number VARCHAR(100),
+    status VARCHAR(30) NOT NULL DEFAULT 'INTERESTED',
+    application_date DATE,
+    notes TEXT,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_ua_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_ua_scheme FOREIGN KEY (scheme_id) REFERENCES schemes(id) ON DELETE SET NULL,
+    CONSTRAINT fk_ua_tender FOREIGN KEY (tender_id) REFERENCES tenders(id) ON DELETE SET NULL,
+    CONSTRAINT uk_ua_user_scheme UNIQUE (user_id, scheme_id),
+    CONSTRAINT uk_ua_user_tender UNIQUE (user_id, tender_id),
+    INDEX idx_ua_user (user_id),
+    INDEX idx_ua_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    action_url VARCHAR(255),
+    read_status BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT fk_notifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_notifications_user_read (user_id, read_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    user_email VARCHAR(100),
+    action VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id BIGINT,
+    details TEXT,
+    ip_address VARCHAR(50),
+    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    INDEX idx_audit_logs_action (action),
+    INDEX idx_audit_logs_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

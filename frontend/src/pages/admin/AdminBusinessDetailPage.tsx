@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { adminService } from '../../services/adminService';
+import { documentService } from '../../services/documentService';
 import { BusinessProfile, BusinessDocument } from '../../types';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Badge } from '../../components/Badge';
@@ -16,6 +17,7 @@ import {
   Mail,
   Phone,
   Globe,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const AdminBusinessDetailPage: React.FC = () => {
@@ -113,7 +115,7 @@ export const AdminBusinessDetailPage: React.FC = () => {
   if (!business) {
     return (
       <div className="max-w-3xl mx-auto py-16 text-center space-y-4">
-        <h2 className="text-xl font-bold">Business Profile Not Found</h2>
+        <h2 className="text-xl font-bold text-[#172033]">Business Profile Not Found</h2>
         <Link to="/admin/businesses/pending" className="btn-primary text-xs">Back to Applications</Link>
       </div>
     );
@@ -123,7 +125,7 @@ export const AdminBusinessDetailPage: React.FC = () => {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Top Nav & Header */}
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link to="/admin/businesses/pending" className="text-xs font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-1">
+        <Link to="/admin/businesses/pending" className="text-xs font-bold text-[#5E6B7D] hover:text-[#173B72] flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Back to Verification List
         </Link>
         <Badge status={business.verificationStatus} />
@@ -132,11 +134,11 @@ export const AdminBusinessDetailPage: React.FC = () => {
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
       {/* Main Review Card */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-gov space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-6">
           <div className="space-y-1">
-            <h1 className="text-2xl font-black text-slate-900">{business.businessName}</h1>
-            <p className="text-xs font-semibold text-blue-600">
+            <h1 className="text-2xl font-black text-[#172033]">{business.businessName}</h1>
+            <p className="text-xs font-bold text-[#173B72]">
               {business.businessType} • {business.industry}
             </p>
           </div>
@@ -144,18 +146,21 @@ export const AdminBusinessDetailPage: React.FC = () => {
           {/* Action Decision Buttons */}
           <div className="flex flex-wrap gap-2">
             <button
+              type="button"
               onClick={() => { setReasonInput(''); setActiveModal('APPROVE'); }}
               className="btn-success text-xs py-2 px-4"
             >
               <CheckCircle2 className="w-4 h-4" /> Approve
             </button>
             <button
+              type="button"
               onClick={() => { setReasonInput(''); setActiveModal('CORRECTION'); }}
-              className="btn-primary bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs py-2 px-4"
+              className="btn-accent text-xs py-2 px-4"
             >
               <AlertTriangle className="w-4 h-4" /> Request Correction
             </button>
             <button
+              type="button"
               onClick={() => { setReasonInput(''); setActiveModal('REJECT'); }}
               className="btn-danger text-xs py-2 px-4"
             >
@@ -167,36 +172,36 @@ export const AdminBusinessDetailPage: React.FC = () => {
         {/* Business Attributes Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-xs">
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Location</span>
-            <span className="font-bold text-slate-800">{business.district}, {business.state}</span>
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Location</span>
+            <span className="font-bold text-[#172033]">{business.district}, {business.state}</span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Turnover Range</span>
-            <span className="font-bold text-slate-800">{business.turnoverRange || 'Not Specified'}</span>
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Turnover Range</span>
+            <span className="font-bold text-[#172033]">{business.turnoverRange || 'Not Specified'}</span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Investment Range</span>
-            <span className="font-bold text-slate-800">{business.investmentRange || 'Not Specified'}</span>
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Investment Range</span>
+            <span className="font-bold text-[#172033]">{business.investmentRange || 'Not Specified'}</span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Employee Count</span>
-            <span className="font-bold text-slate-800">{business.employeeCount || '1-10'}</span>
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Employee Count</span>
+            <span className="font-bold text-[#172033]">{business.employeeCount || '1-10'}</span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Business Email</span>
-            <span className="font-bold text-slate-800 flex items-center gap-1">
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Business Email</span>
+            <span className="font-bold text-[#172033] flex items-center gap-1">
               <Mail className="w-3.5 h-3.5 text-slate-400" />
               {business.businessEmail || 'N/A'}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium uppercase text-[10px]">Phone</span>
-            <span className="font-bold text-slate-800 flex items-center gap-1">
+            <span className="text-[#5E6B7D] block font-bold uppercase text-[10px]">Phone</span>
+            <span className="font-bold text-[#172033] flex items-center gap-1">
               <Phone className="w-3.5 h-3.5 text-slate-400" />
               {business.phone || 'N/A'}
             </span>
@@ -206,8 +211,8 @@ export const AdminBusinessDetailPage: React.FC = () => {
         {/* Business Description */}
         {business.businessDescription && (
           <div className="space-y-1 text-xs">
-            <span className="text-slate-400 font-medium uppercase text-[10px]">Business Description</span>
-            <p className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 leading-relaxed">
+            <span className="text-[#5E6B7D] font-bold uppercase text-[10px]">Business Description</span>
+            <p className="bg-[#F5F7FA] p-4 rounded-xl border border-slate-200 text-[#172033] leading-relaxed">
               {business.businessDescription}
             </p>
           </div>
@@ -215,9 +220,9 @@ export const AdminBusinessDetailPage: React.FC = () => {
       </div>
 
       {/* Submitted Documents Section */}
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-indigo-600" />
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-gov space-y-4">
+        <h2 className="text-base font-bold text-[#173B72] flex items-center gap-2">
+          <FileText className="w-5 h-5 text-[#173B72]" />
           Submitted Business Verification Documents ({documents.length})
         </h2>
 
@@ -226,25 +231,30 @@ export const AdminBusinessDetailPage: React.FC = () => {
             {documents.map((doc) => (
               <div key={doc.id} className="py-3 flex items-center justify-between text-xs">
                 <div>
-                  <span className="font-bold text-slate-900 block">{doc.documentType}</span>
-                  <span className="text-slate-500 font-mono">{doc.fileName}</span>
+                  <span className="font-bold text-[#172033] block">{doc.documentType}</span>
+                  <span className="text-[#5E6B7D] font-mono">{doc.fileName}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge status={doc.status} />
-                  <a
-                    href={doc.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await documentService.viewOrDownloadDocument(doc.fileUrl, doc.fileName);
+                      } catch (err) {
+                        setAlert({ type: 'error', message: 'Could not view file. Ensure file exists and server is running.' });
+                      }
+                    }}
                     className="btn-secondary py-1.5 px-3 text-xs"
                   >
                     <Download className="w-3.5 h-3.5" /> View File
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-xl">
+          <div className="p-4 text-center text-xs text-[#5E6B7D] bg-[#F5F7FA] rounded-xl">
             No verification documents uploaded yet by business.
           </div>
         )}
@@ -252,9 +262,9 @@ export const AdminBusinessDetailPage: React.FC = () => {
 
       {/* Action Decision Dialog Modal */}
       {activeModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900">
+        <div role="dialog" aria-modal="true" className="fixed inset-0 bg-[#0F264A]/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-gov-lg space-y-4 border border-slate-200">
+            <h3 className="text-lg font-bold text-[#172033]">
               {activeModal === 'APPROVE' && 'Approve Business Verification'}
               {activeModal === 'REJECT' && 'Reject Business Verification'}
               {activeModal === 'CORRECTION' && 'Request Correction from Business'}
@@ -275,22 +285,23 @@ export const AdminBusinessDetailPage: React.FC = () => {
             )}
 
             {activeModal === 'APPROVE' && (
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-[#5E6B7D]">
                 Are you sure you want to mark <strong>{business.businessName}</strong> as VERIFIED? This will unlock full recommendation access for the business.
               </p>
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <button onClick={() => setActiveModal(null)} className="btn-secondary text-xs">
+              <button type="button" onClick={() => setActiveModal(null)} className="btn-secondary text-xs">
                 Cancel
               </button>
               {activeModal === 'APPROVE' && (
-                <button onClick={handleApprove} disabled={actionLoading} className="btn-success text-xs">
+                <button type="button" onClick={handleApprove} disabled={actionLoading} className="btn-success text-xs">
                   {actionLoading ? 'Approving...' : 'Confirm Approve'}
                 </button>
               )}
               {activeModal === 'REJECT' && (
                 <button
+                  type="button"
                   onClick={handleReject}
                   disabled={actionLoading || !reasonInput.trim()}
                   className="btn-danger text-xs"
@@ -300,9 +311,10 @@ export const AdminBusinessDetailPage: React.FC = () => {
               )}
               {activeModal === 'CORRECTION' && (
                 <button
+                  type="button"
                   onClick={handleCorrection}
                   disabled={actionLoading || !reasonInput.trim()}
-                  className="btn-primary text-xs bg-amber-600 hover:bg-amber-700"
+                  className="btn-accent text-xs"
                 >
                   {actionLoading ? 'Sending...' : 'Send Correction Request'}
                 </button>

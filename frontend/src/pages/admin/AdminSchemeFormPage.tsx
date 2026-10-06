@@ -7,6 +7,43 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Alert } from '../../components/Alert';
 import { ArrowLeft, Save, Send } from 'lucide-react';
 
+const INDIAN_STATES = [
+  'All India',
+  'Uttar Pradesh',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttarakhand',
+  'West Bengal',
+  'Delhi (NCT)',
+  'Jammu & Kashmir',
+  'Ladakh',
+  'Chandigarh',
+  'Puducherry',
+];
+
 export const AdminSchemeFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
@@ -102,21 +139,22 @@ export const AdminSchemeFormPage: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link to="/admin/schemes" className="text-xs font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-1">
+        <Link to="/admin/schemes" className="text-xs font-bold text-[#5E6B7D] hover:text-[#173B72] flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Back to Schemes Management
         </Link>
-        <h1 className="text-xl font-black text-slate-900">
+        <h1 className="text-xl font-black text-[#172033]">
           {isEditMode ? 'Edit Government Scheme' : 'Add New Government Scheme'}
         </h1>
       </div>
 
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
-      <form onSubmit={(e) => handleSubmit(e)} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+      <form onSubmit={(e) => handleSubmit(e)} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-gov space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="label-field">Scheme Title *</label>
+            <label htmlFor="f-title" className="label-field">Scheme Title *</label>
             <input
+              id="f-title"
               type="text"
               name="title"
               required
@@ -128,8 +166,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Department *</label>
+            <label htmlFor="f-dept" className="label-field">Department *</label>
             <input
+              id="f-dept"
               type="text"
               name="department"
               required
@@ -141,8 +180,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Ministry (Optional)</label>
+            <label htmlFor="f-min" className="label-field">Ministry (Optional)</label>
             <input
+              id="f-min"
               type="text"
               name="ministry"
               value={formData.ministry || ''}
@@ -153,8 +193,14 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Scheme Type *</label>
-            <select name="schemeType" value={formData.schemeType || 'Subsidy'} onChange={handleChange} className="input-field">
+            <label htmlFor="f-type" className="label-field">Scheme Type *</label>
+            <select
+              id="f-type"
+              name="schemeType"
+              value={formData.schemeType || 'Subsidy'}
+              onChange={handleChange}
+              className="input-field"
+            >
               <option value="Subsidy">Subsidy</option>
               <option value="Grant">Grant</option>
               <option value="Loan">Loan & Credit</option>
@@ -163,20 +209,26 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">State / Region *</label>
-            <select name="state" value={formData.state || 'All India'} onChange={handleChange} className="input-field">
-              <option value="All India">All India / Central Scheme</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Karnataka">Karnataka</option>
+            <label htmlFor="f-state" className="label-field">State / Region *</label>
+            <select
+              id="f-state"
+              name="state"
+              value={formData.state || 'All India'}
+              onChange={handleChange}
+              className="input-field"
+            >
+              {INDIAN_STATES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label className="label-field">District Scope</label>
+            <label htmlFor="f-district" className="label-field">District Scope</label>
             <input
+              id="f-district"
               type="text"
               name="district"
               value={formData.district || ''}
@@ -187,8 +239,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Application Deadline</label>
+            <label htmlFor="f-deadline" className="label-field">Application Deadline</label>
             <input
+              id="f-deadline"
               type="date"
               name="deadline"
               value={formData.deadline || ''}
@@ -199,8 +252,9 @@ export const AdminSchemeFormPage: React.FC = () => {
         </div>
 
         <div>
-          <label className="label-field">Short Description Summary (1-2 sentences)</label>
+          <label htmlFor="f-sdesc" className="label-field">Short Description Summary (1-2 sentences)</label>
           <input
+            id="f-sdesc"
             type="text"
             name="shortDescription"
             value={formData.shortDescription || ''}
@@ -211,8 +265,9 @@ export const AdminSchemeFormPage: React.FC = () => {
         </div>
 
         <div>
-          <label className="label-field">Detailed Scheme Description *</label>
+          <label htmlFor="f-desc" className="label-field">Detailed Scheme Description *</label>
           <textarea
+            id="f-desc"
             name="description"
             rows={4}
             required
@@ -225,8 +280,9 @@ export const AdminSchemeFormPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Financial Benefits & Incentives</label>
+            <label htmlFor="f-benefits" className="label-field">Financial Benefits & Incentives</label>
             <textarea
+              id="f-benefits"
               name="benefits"
               rows={3}
               value={formData.benefits || ''}
@@ -237,8 +293,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Eligibility Criteria</label>
+            <label htmlFor="f-elig" className="label-field">Eligibility Criteria</label>
             <textarea
+              id="f-elig"
               name="eligibility"
               rows={3}
               value={formData.eligibility || ''}
@@ -251,8 +308,9 @@ export const AdminSchemeFormPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Required Documents</label>
+            <label htmlFor="f-docs" className="label-field">Required Documents</label>
             <textarea
+              id="f-docs"
               name="requiredDocuments"
               rows={3}
               value={formData.requiredDocuments || ''}
@@ -263,8 +321,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Application Process Steps</label>
+            <label htmlFor="f-process" className="label-field">Application Process Steps</label>
             <textarea
+              id="f-process"
               name="applicationProcess"
               rows={3}
               value={formData.applicationProcess || ''}
@@ -277,20 +336,25 @@ export const AdminSchemeFormPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Official Application URL</label>
+            <label htmlFor="f-appurl" className="label-field">Direct Application Page URL (Optional)</label>
             <input
+              id="f-appurl"
               type="url"
               name="officialApplicationUrl"
               value={formData.officialApplicationUrl || ''}
               onChange={handleChange}
-              placeholder="https://pmfme.mofpi.gov.in"
+              placeholder="https://pmfme.mofpi.gov.in/apply"
               className="input-field"
             />
+            <p className="text-[11px] text-slate-500 mt-1">
+              Direct application form/login URL. Leave blank if only official website info exists.
+            </p>
           </div>
 
           <div>
-            <label className="label-field">Official Source URL</label>
+            <label htmlFor="f-srcurl" className="label-field">Official Government Website URL</label>
             <input
+              id="f-srcurl"
               type="url"
               name="officialSourceUrl"
               value={formData.officialSourceUrl || ''}
@@ -298,13 +362,17 @@ export const AdminSchemeFormPage: React.FC = () => {
               placeholder="https://mofpi.gov.in"
               className="input-field"
             />
+            <p className="text-[11px] text-slate-500 mt-1">
+              Official scheme detail or ministry information page URL.
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Target Industries (Comma-separated for recommendations)</label>
+            <label htmlFor="f-ind" className="label-field">Target Industries (Comma-separated for recommendations)</label>
             <input
+              id="f-ind"
               type="text"
               name="targetIndustries"
               value={formData.targetIndustries || ''}
@@ -315,8 +383,9 @@ export const AdminSchemeFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Target Business Types (Comma-separated)</label>
+            <label htmlFor="f-biztypes" className="label-field">Target Business Types (Comma-separated)</label>
             <input
+              id="f-biztypes"
               type="text"
               name="targetBusinessTypes"
               value={formData.targetBusinessTypes || ''}
@@ -328,13 +397,13 @@ export const AdminSchemeFormPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4 pt-2">
-          <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs font-bold text-[#172033] cursor-pointer">
             <input
               type="checkbox"
               name="featured"
               checked={Boolean(formData.featured)}
               onChange={handleChange}
-              className="w-4 h-4 text-blue-600 rounded"
+              className="w-4 h-4 text-[#173B72] rounded"
             />
             Mark as Featured Scheme on Homepage
           </label>
@@ -354,7 +423,7 @@ export const AdminSchemeFormPage: React.FC = () => {
             type="button"
             onClick={(e) => handleSubmit(e, 'PUBLISHED')}
             disabled={saving}
-            className="btn-primary text-xs py-2.5 px-6 font-bold bg-blue-600 hover:bg-blue-700"
+            className="btn-primary text-xs py-2.5 px-6 font-bold bg-[#173B72] hover:bg-[#2456A6]"
           >
             <Send className="w-4 h-4" />
             {saving ? 'Publishing...' : 'Save & Publish Scheme Live'}

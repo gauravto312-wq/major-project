@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public interface SchemeRepository extends JpaRepository<Scheme, Long>, JpaSpecif
 
     List<Scheme> findTop6ByStatusInAndFeaturedTrueOrderByCreatedAtDesc(List<SchemeStatus> statuses);
     List<Scheme> findTop6ByStatusInOrderByCreatedAtDesc(List<SchemeStatus> statuses);
+    List<Scheme> findByStatusInAndDeadlineGreaterThanEqualOrderByDeadlineAsc(List<SchemeStatus> statuses, LocalDate date, Pageable pageable);
 
     Page<Scheme> findByStatusIn(List<SchemeStatus> statuses, Pageable pageable);
 

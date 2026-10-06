@@ -1,5 +1,5 @@
 import api from './api';
-import { ApiResponse, PageResponse, Scheme } from '../types';
+import { ApiResponse, PageResponse, Scheme, SchemeAssistantDto } from '../types';
 
 export interface SchemeFilterParams {
   keyword?: string;
@@ -37,4 +37,15 @@ export const schemeService = {
     const res = await api.get<ApiResponse<Scheme>>(`/schemes/${id}`);
     return res.data;
   },
+
+  async getAssistantSummary(id: number) {
+    const res = await api.get<ApiResponse<SchemeAssistantDto>>(`/schemes/${id}/assistant`);
+    return res.data;
+  },
+
+  async getAssistantSummaryBySlug(slug: string) {
+    const res = await api.get<ApiResponse<SchemeAssistantDto>>(`/schemes/slug/${slug}/assistant`);
+    return res.data;
+  },
 };
+

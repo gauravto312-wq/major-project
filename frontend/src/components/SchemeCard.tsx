@@ -32,24 +32,24 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme, isSavedInitial =
         if (onSaveToggle) onSaveToggle(true);
       }
     } catch (err) {
-      // silent
+      console.error('Failed to update bookmark status:', err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="card flex flex-col justify-between p-5 hover:border-blue-300 hover:shadow-lg transition-all group">
+    <article className="card flex flex-col justify-between p-5 bg-white/95 border border-slate-200 shadow-gov hover:border-[#6F9ED8] hover:shadow-gov-md transition-all group">
       <div>
         {/* Top Badges & Bookmark */}
         <div className="flex justify-between items-start gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold px-2.5 py-0.5 rounded-md">
-              {scheme.schemeType}
+            <span className="bg-[#E5EEF9] text-[#173B72] border border-[#C7DBF2] text-[11px] font-bold px-2.5 py-0.5 rounded-md">
+              {scheme.schemeType || 'Scheme'}
             </span>
             {scheme.featured && (
-              <span className="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Featured
+              <span className="bg-[#FEF7E6] text-[#B7791F] border border-[#F8D88E] text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#C89B3C]" /> Featured
               </span>
             )}
             <Badge status={scheme.status} />
@@ -57,29 +57,31 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme, isSavedInitial =
 
           {isAuthenticated && (
             <button
+              type="button"
               onClick={handleSaveClick}
               disabled={loading}
+              aria-label={isSaved ? 'Remove Bookmark' : 'Save Scheme'}
               className={`p-1.5 rounded-lg border transition-colors ${
                 isSaved
-                  ? 'bg-amber-50 border-amber-300 text-amber-600'
-                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-700'
+                  ? 'bg-amber-50 border-[#C89B3C] text-[#C89B3C]'
+                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-[#173B72] hover:border-slate-300'
               }`}
               title={isSaved ? 'Remove Bookmark' : 'Save Scheme'}
             >
-              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-amber-500' : ''}`} />
+              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-[#C89B3C]' : ''}`} />
             </button>
           )}
         </div>
 
         {/* Title */}
-        <Link to={`/schemes/${scheme.slug}`} className="block group-hover:text-blue-600 transition-colors">
-          <h3 className="text-base font-bold text-slate-900 leading-snug line-clamp-2 mb-2">
+        <Link to={`/schemes/${scheme.slug}`} className="block group-hover:text-[#173B72] transition-colors">
+          <h3 className="text-base font-bold text-[#172033] leading-snug line-clamp-2 mb-2 group-hover:text-[#173B72]">
             {scheme.title}
           </h3>
         </Link>
 
         {/* Department & State */}
-        <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 mb-3">
+        <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-[#5E6B7D] mb-3">
           <span className="flex items-center gap-1">
             <Building2 className="w-3.5 h-3.5 text-slate-400" />
             <span className="truncate max-w-[160px]">{scheme.department}</span>
@@ -91,28 +93,30 @@ export const SchemeCard: React.FC<SchemeCardProps> = ({ scheme, isSavedInitial =
         </div>
 
         {/* Description */}
-        <p className="text-xs text-slate-600 line-clamp-3 mb-4 leading-relaxed">
+        <p className="text-xs text-[#5E6B7D] line-clamp-3 mb-4 leading-relaxed">
           {scheme.shortDescription || scheme.description}
         </p>
       </div>
 
       {/* Footer Meta */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1 text-slate-500">
-          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-          <span>
-            {scheme.deadline ? `Deadline: ${new Date(scheme.deadline).toLocaleDateString()}` : 'Open Application'}
-          </span>
-        </div>
-
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
         <Link
           to={`/schemes/${scheme.slug}`}
-          className="text-blue-600 font-bold hover:text-blue-800 flex items-center gap-1 text-xs"
+          className="text-[#173B72] font-bold hover:text-[#2456A6] flex items-center gap-1 text-xs"
         >
           View Details
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
+
+        {scheme.slug && (
+          <Link
+            to={`/schemes/${scheme.slug}/assistant`}
+            className="bg-[#173B72] hover:bg-[#2456A6] text-white text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+          >
+            <Sparkles className="w-3 h-3 text-[#C89B3C]" /> Assistant
+          </Link>
+        )}
       </div>
-    </div>
+    </article>
   );
 };

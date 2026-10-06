@@ -3,7 +3,8 @@ import { adminService } from '../../services/adminService';
 import { Scheme, Tender } from '../../types';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Alert } from '../../components/Alert';
-import { CheckCircle, XCircle, Clock, Building2, ExternalLink, Calendar, Layers } from 'lucide-react';
+import { AdminHeaderNav } from '../../components/AdminHeaderNav';
+import { CheckCircle, XCircle, Clock, Building2, ExternalLink, Calendar, Layers, ShieldCheck } from 'lucide-react';
 
 export const AdminPendingReviewPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'schemes' | 'tenders'>('schemes');
@@ -99,16 +100,29 @@ export const AdminPendingReviewPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider">
-          <Clock className="w-4 h-4" /> Admin Verification & Review Queue
+    <>
+      <AdminHeaderNav />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      {/* Header Banner with Vidhan Bhawan Visual Identity */}
+      <div
+        className="relative rounded-3xl p-6 sm:p-8 text-white shadow-gov-lg overflow-hidden space-y-2 bg-[#173B72]"
+        style={{
+          backgroundImage: "url('/assets/vidhan-bhawan.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#173B72]/95 via-[#173B72]/90 to-[#0F264A]/95 backdrop-blur-[1px]"></div>
+
+        <div className="relative z-10 space-y-1 max-w-3xl">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#C89B3C] uppercase tracking-wider">
+            <Clock className="w-4 h-4 text-[#C89B3C]" /> Admin Verification & Publication Queue
+          </div>
+          <h1 className="text-2xl font-black text-white">Imported Data Review Queue</h1>
+          <p className="text-xs text-[#F5F7FA]/90">
+            Review, edit, and approve imported government schemes and procurement tenders fetched from official data APIs before publishing them live to MSMEs and users.
+          </p>
         </div>
-        <h1 className="text-2xl font-black text-slate-900">Imported Data Review Queue</h1>
-        <p className="text-xs text-slate-500">
-          Review, edit, and approve imported government schemes and procurement tenders fetched from official data APIs before publishing them live to MSMEs and users.
-        </p>
       </div>
 
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
@@ -117,25 +131,28 @@ export const AdminPendingReviewPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 gap-4 pb-3">
         <div className="flex gap-4">
           <button
+            type="button"
             onClick={() => setActiveTab('schemes')}
-            className={`pb-2 text-sm font-bold border-b-2 flex items-center gap-2 transition-colors ${
-              activeTab === 'schemes' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-700'
+            className={`pb-2 text-xs font-bold uppercase tracking-wider border-b-2 flex items-center gap-2 transition-colors ${
+              activeTab === 'schemes' ? 'border-[#173B72] text-[#173B72]' : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
             }`}
           >
-            <Layers className="w-4 h-4" /> Pending Schemes ({pendingSchemes.length})
+            <Layers className="w-4 h-4 text-[#C89B3C]" /> Pending Schemes ({pendingSchemes.length})
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('tenders')}
-            className={`pb-2 text-sm font-bold border-b-2 flex items-center gap-2 transition-colors ${
-              activeTab === 'tenders' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-700'
+            className={`pb-2 text-xs font-bold uppercase tracking-wider border-b-2 flex items-center gap-2 transition-colors ${
+              activeTab === 'tenders' ? 'border-[#173B72] text-[#173B72]' : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
             }`}
           >
-            <Building2 className="w-4 h-4" /> Pending Tenders ({pendingTenders.length})
+            <Building2 className="w-4 h-4 text-[#C89B3C]" /> Pending Tenders ({pendingTenders.length})
           </button>
         </div>
 
         {((activeTab === 'schemes' && pendingSchemes.length > 0) || (activeTab === 'tenders' && pendingTenders.length > 0)) && (
           <button
+            type="button"
             onClick={async () => {
               setLoading(true);
               try {
@@ -157,7 +174,7 @@ export const AdminPendingReviewPage: React.FC = () => {
                 setLoading(false);
               }
             }}
-            className="btn-primary text-xs py-2 px-4 bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1.5"
+            className="btn-success text-xs py-2 px-4 flex items-center gap-1.5"
           >
             <CheckCircle className="w-4 h-4" /> Bulk Approve All Pending {activeTab === 'schemes' ? 'Schemes' : 'Tenders'}
           </button>
@@ -169,49 +186,49 @@ export const AdminPendingReviewPage: React.FC = () => {
         <LoadingSpinner message="Loading pending records for review..." />
       ) : activeTab === 'schemes' ? (
         pendingSchemes.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-3">
-            <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto" />
-            <h3 className="text-lg font-bold text-slate-800">Review Queue Empty!</h3>
-            <p className="text-xs text-slate-500">All imported schemes have been reviewed and published.</p>
+          <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-3 shadow-gov">
+            <CheckCircle className="w-10 h-10 text-[#1B8354] mx-auto" />
+            <h3 className="text-lg font-bold text-[#172033]">Review Queue Empty!</h3>
+            <p className="text-xs text-[#5E6B7D]">All imported schemes have been reviewed and published.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {pendingSchemes.map((scheme) => (
-              <div key={scheme.id} className="bg-white p-6 rounded-3xl border border-amber-200 shadow-sm space-y-4">
+              <div key={scheme.id} className="bg-white p-6 rounded-3xl border border-[#F8D88E] shadow-gov space-y-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#B7791F] bg-[#FEF7E6] px-2 py-0.5 rounded border border-[#F8D88E]">
                       PENDING REVIEW • {scheme.schemeType}
                     </span>
-                    <h3 className="text-lg font-bold text-slate-900 mt-1">{scheme.title}</h3>
-                    <p className="text-xs text-slate-600 mt-0.5">{scheme.shortDescription || scheme.description}</p>
+                    <h3 className="text-lg font-bold text-[#172033] mt-1">{scheme.title}</h3>
+                    <p className="text-xs text-[#5E6B7D] mt-0.5">{scheme.shortDescription || scheme.description}</p>
                   </div>
-                  <span className="text-xs text-slate-400 font-mono">ID: {scheme.id}</span>
+                  <span className="text-xs text-[#5E6B7D] font-mono">ID: {scheme.id}</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-[#F5F7FA] p-3 rounded-2xl border border-slate-200">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Department / Ministry</span>
-                    <strong className="text-slate-800">{scheme.department}</strong>
+                    <span className="text-[#5E6B7D] block text-[10px]">Department / Ministry</span>
+                    <strong className="text-[#172033]">{scheme.department}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">State / Region</span>
-                    <strong className="text-slate-800">{scheme.state}</strong>
+                    <span className="text-[#5E6B7D] block text-[10px]">State / Region</span>
+                    <strong className="text-[#172033]">{scheme.state}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Source Attribution</span>
-                    <strong className="text-blue-700">{scheme.sourceName || 'API Integration'}</strong>
+                    <span className="text-[#5E6B7D] block text-[10px]">Source Attribution</span>
+                    <strong className="text-[#173B72]">{scheme.sourceName || 'API Integration'}</strong>
                   </div>
                 </div>
 
                 {scheme.officialApplicationUrl && (
-                  <div className="text-xs text-slate-500 flex items-center gap-1">
+                  <div className="text-xs text-[#5E6B7D] flex items-center gap-1">
                     <span>Official Portal:</span>
                     <a
                       href={scheme.officialApplicationUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 font-bold hover:underline flex items-center gap-0.5"
+                      className="text-[#173B72] font-bold hover:underline flex items-center gap-0.5"
                     >
                       {scheme.officialApplicationUrl} <ExternalLink className="w-3 h-3" />
                     </a>
@@ -220,16 +237,18 @@ export const AdminPendingReviewPage: React.FC = () => {
 
                 <div className="pt-3 border-t border-slate-100 flex justify-end gap-3">
                   <button
+                    type="button"
                     onClick={() => handleRejectScheme(scheme.id)}
                     disabled={actionId === scheme.id}
-                    className="btn-secondary text-xs py-2 px-4 text-rose-600 hover:bg-rose-50 border-rose-200"
+                    className="btn-danger text-xs py-2 px-4"
                   >
                     <XCircle className="w-4 h-4" /> Reject
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleApproveScheme(scheme.id)}
                     disabled={actionId === scheme.id}
-                    className="btn-primary text-xs py-2 px-5 bg-emerald-600 hover:bg-emerald-700"
+                    className="btn-success text-xs py-2 px-5"
                   >
                     <CheckCircle className="w-4 h-4" /> Approve & Publish Live
                   </button>
@@ -239,57 +258,55 @@ export const AdminPendingReviewPage: React.FC = () => {
           </div>
         )
       ) : pendingTenders.length === 0 ? (
-        <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-3">
-          <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto" />
-          <h3 className="text-lg font-bold text-slate-800">Review Queue Empty!</h3>
-          <p className="text-xs text-slate-500">All imported tenders have been reviewed and published.</p>
+        <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-3 shadow-gov">
+          <CheckCircle className="w-10 h-10 text-[#1B8354] mx-auto" />
+          <h3 className="text-lg font-bold text-[#172033]">Review Queue Empty!</h3>
+          <p className="text-xs text-[#5E6B7D]">All imported procurement tenders have been reviewed and published.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {pendingTenders.map((tender) => (
-            <div key={tender.id} className="bg-white p-6 rounded-3xl border border-amber-200 shadow-sm space-y-4">
+            <div key={tender.id} className="bg-white p-6 rounded-3xl border border-[#F8D88E] shadow-gov space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
-                    PENDING REVIEW • TENDER #{tender.tenderNumber}
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#B7791F] bg-[#FEF7E6] px-2 py-0.5 rounded border border-[#F8D88E]">
+                    PENDING REVIEW • TENDER
                   </span>
-                  <h3 className="text-lg font-bold text-slate-900 mt-1">{tender.title}</h3>
-                  <p className="text-xs text-slate-600 mt-0.5">{tender.description}</p>
+                  <h3 className="text-lg font-bold text-[#172033] mt-1">{tender.title}</h3>
+                  <p className="text-xs text-[#5E6B7D] mt-0.5">{tender.description}</p>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">ID: {tender.id}</span>
+                <span className="text-xs text-[#5E6B7D] font-mono">Ref: {tender.tenderNumber}</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-slate-50 p-3 rounded-2xl border border-slate-200">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs bg-[#F5F7FA] p-3 rounded-2xl border border-slate-200">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Organization</span>
-                  <strong className="text-slate-800">{tender.organization}</strong>
+                  <span className="text-[#5E6B7D] block text-[10px]">Authority</span>
+                  <strong className="text-[#172033]">{tender.organization}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Estimated Value</span>
-                  <strong className="text-emerald-700">
-                    {tender.estimatedValue ? `₹${(tender.estimatedValue / 100000).toFixed(1)} Lakhs` : 'N/A'}
-                  </strong>
+                  <span className="text-[#5E6B7D] block text-[10px]">State</span>
+                  <strong className="text-[#172033]">{tender.state}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Closing Date</span>
-                  <strong className="text-slate-800">
-                    {tender.closingDate ? new Date(tender.closingDate).toLocaleDateString() : 'N/A'}
-                  </strong>
+                  <span className="text-[#5E6B7D] block text-[10px]">Source Attribution</span>
+                  <strong className="text-[#173B72]">{tender.sourceName || 'eProcure / GeM'}</strong>
                 </div>
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex justify-end gap-3">
                 <button
+                  type="button"
                   onClick={() => handleRejectTender(tender.id)}
                   disabled={actionId === tender.id}
-                  className="btn-secondary text-xs py-2 px-4 text-rose-600 hover:bg-rose-50 border-rose-200"
+                  className="btn-danger text-xs py-2 px-4"
                 >
                   <XCircle className="w-4 h-4" /> Reject
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleApproveTender(tender.id)}
                   disabled={actionId === tender.id}
-                  className="btn-primary text-xs py-2 px-5 bg-emerald-600 hover:bg-emerald-700"
+                  className="btn-success text-xs py-2 px-5"
                 >
                   <CheckCircle className="w-4 h-4" /> Approve & Publish Live
                 </button>
@@ -298,6 +315,7 @@ export const AdminPendingReviewPage: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };

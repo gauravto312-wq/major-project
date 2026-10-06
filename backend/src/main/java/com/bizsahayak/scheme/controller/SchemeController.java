@@ -75,4 +75,24 @@ public class SchemeController {
         SchemeDto dto = schemeService.getSchemeById(id);
         return ResponseEntity.ok(ApiResponse.success(dto));
     }
+
+    @GetMapping("/{id}/assistant")
+    @Operation(summary = "Get data-driven Application Assistant summary for a scheme")
+    public ResponseEntity<ApiResponse<com.bizsahayak.scheme.dto.SchemeAssistantDto>> getAssistantSummary(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.bizsahayak.security.UserPrincipal currentUser) {
+        Long userId = (currentUser != null) ? currentUser.getId() : null;
+        com.bizsahayak.scheme.dto.SchemeAssistantDto assistantDto = schemeService.getAssistantSummary(id, userId);
+        return ResponseEntity.ok(ApiResponse.success(assistantDto));
+    }
+
+    @GetMapping("/slug/{slug}/assistant")
+    @Operation(summary = "Get data-driven Application Assistant summary for a scheme by slug")
+    public ResponseEntity<ApiResponse<com.bizsahayak.scheme.dto.SchemeAssistantDto>> getAssistantSummaryBySlug(
+            @PathVariable String slug,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.bizsahayak.security.UserPrincipal currentUser) {
+        Long userId = (currentUser != null) ? currentUser.getId() : null;
+        com.bizsahayak.scheme.dto.SchemeAssistantDto assistantDto = schemeService.getAssistantSummaryBySlug(slug, userId);
+        return ResponseEntity.ok(ApiResponse.success(assistantDto));
+    }
 }

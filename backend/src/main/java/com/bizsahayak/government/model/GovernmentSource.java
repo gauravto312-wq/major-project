@@ -60,6 +60,10 @@ public class GovernmentSource extends BaseEntity {
     private boolean active = true;
 
     @Builder.Default
+    @Column(nullable = false)
+    private boolean autoPublish = false;
+
+    @Builder.Default
     @Column(length = 50)
     private String syncFrequency = "0 0 */6 * * *"; // Every 6 hours
 

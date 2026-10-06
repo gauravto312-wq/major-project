@@ -12,4 +12,5 @@ public interface UserApplicationRepository extends JpaRepository<UserApplication
     Optional<UserApplication> findByUserIdAndSchemeId(Long userId, Long schemeId);
     Optional<UserApplication> findByUserIdAndTenderId(Long userId, Long tenderId);
     long countByUserId(Long userId);
+    long countByUserIdAndStatus(Long userId, ApplicationStatus status);
 }

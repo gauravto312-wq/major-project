@@ -12,23 +12,23 @@ export const Alert: React.FC<AlertProps> = ({ type = 'info', message, onClose })
     switch (type) {
       case 'success':
         return {
-          bg: 'bg-emerald-50 border-emerald-200 text-emerald-900',
-          icon: <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />,
+          bg: 'bg-[#EBF7F0] border-[#A3D9BD] text-[#1B8354]',
+          icon: <CheckCircle className="w-5 h-5 text-[#1B8354] flex-shrink-0" />,
         };
       case 'error':
         return {
-          bg: 'bg-rose-50 border-rose-200 text-rose-900',
-          icon: <XCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />,
+          bg: 'bg-[#FDF2F2] border-[#F7A3A3] text-[#C53030]',
+          icon: <XCircle className="w-5 h-5 text-[#C53030] flex-shrink-0" />,
         };
       case 'warning':
         return {
-          bg: 'bg-amber-50 border-amber-200 text-amber-900',
-          icon: <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />,
+          bg: 'bg-[#FEF7E6] border-[#F8D88E] text-[#B7791F]',
+          icon: <AlertCircle className="w-5 h-5 text-[#B7791F] flex-shrink-0" />,
         };
       default:
         return {
-          bg: 'bg-blue-50 border-blue-200 text-blue-900',
-          icon: <Info className="w-5 h-5 text-blue-600 flex-shrink-0" />,
+          bg: 'bg-[#E5EEF9] border-[#C7DBF2] text-[#173B72]',
+          icon: <Info className="w-5 h-5 text-[#173B72] flex-shrink-0" />,
         };
     }
   };
@@ -36,11 +36,20 @@ export const Alert: React.FC<AlertProps> = ({ type = 'info', message, onClose })
   const style = getStyles();
 
   return (
-    <div className={`p-4 rounded-xl border flex items-start gap-3 text-xs font-medium ${style.bg} transition-all`}>
+    <div
+      role="alert"
+      aria-live="polite"
+      className={`p-4 rounded-xl border flex items-start gap-3 text-xs font-semibold ${style.bg} transition-all shadow-sm`}
+    >
       {style.icon}
-      <div className="flex-1 pt-0.5">{message}</div>
+      <div className="flex-1 pt-0.5 leading-relaxed">{message}</div>
       {onClose && (
-        <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold ml-2">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Dismiss alert"
+          className="text-slate-400 hover:text-slate-600 font-bold ml-2 p-1 rounded hover:bg-black/5 transition-colors"
+        >
           ✕
         </button>
       )}

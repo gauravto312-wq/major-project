@@ -6,7 +6,44 @@ import { SchemeCard } from '../../components/SchemeCard';
 import { Pagination } from '../../components/Pagination';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { Search, Filter, RefreshCw } from 'lucide-react';
+import { Alert } from '../../components/Alert';
+import { Search, Filter, RefreshCw, Landmark } from 'lucide-react';
+
+const INDIAN_STATES = [
+  'Uttar Pradesh',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttarakhand',
+  'West Bengal',
+  'Delhi (NCT)',
+  'Jammu & Kashmir',
+  'Ladakh',
+  'Chandigarh',
+  'Puducherry',
+];
 
 export const SchemesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,6 +56,7 @@ export const SchemesPage: React.FC = () => {
 
   const [schemesData, setSchemesData] = useState<PageResponse<Scheme> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSchemes();
@@ -26,6 +64,7 @@ export const SchemesPage: React.FC = () => {
 
   const fetchSchemes = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await schemeService.getPublicSchemes({
         keyword: searchParams.get('keyword') || undefined,
@@ -38,9 +77,12 @@ export const SchemesPage: React.FC = () => {
 
       if (res.success) {
         setSchemesData(res.data);
+      } else {
+        setError('Failed to load schemes from the server. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching schemes:', err);
+      setError('Unable to connect to the schemes repository. Please ensure the backend is available.');
     } finally {
       setLoading(false);
     }
@@ -68,50 +110,85 @@ export const SchemesPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-8 text-white shadow-lg space-y-2">
-        <h1 className="text-2xl sm:text-4xl font-black">Government Schemes & Subsidies</h1>
-        <p className="text-xs sm:text-sm text-blue-100 max-w-2xl">
-          Search and discover Central and State government programs, capital subsidies, margin money grants, and loan guarantee support.
-        </p>
+      {/* Header Banner with Vidhan Bhawan Visual Identity */}
+      <div
+        className="relative rounded-3xl p-8 text-white shadow-gov-lg overflow-hidden bg-[#173B72]"
+        style={{
+          backgroundImage: "url('/assets/vidhan-bhawan.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#173B72]/95 via-[#173B72]/85 to-[#0F264A]/95 backdrop-blur-[1px]"></div>
+
+        <div className="relative z-10 space-y-2 max-w-3xl">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-[#F3E8D0] border border-[#C89B3C]/40">
+            <Landmark className="w-3.5 h-3.5 text-[#C89B3C]" />
+            <span>Official Central & State Discovery Portal</span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            Government Schemes & Subsidies
+          </h1>
+          <p className="text-xs sm:text-sm text-[#F5F7FA]/90 leading-relaxed">
+            Search and discover Central and State government programs, capital subsidies, margin money grants, and loan guarantee support across Uttar Pradesh and all India.
+          </p>
+        </div>
       </div>
 
+      {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
+
       {/* Filter Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-gov">
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 items-end">
           {/* Keyword Search */}
           <div className="md:col-span-2">
-            <label className="label-field">Search Keyword</label>
+            <label htmlFor="scheme-keyword" className="label-field">
+              Search Keyword
+            </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Search className="input-leading-icon" />
               <input
+                id="scheme-keyword"
                 type="text"
                 placeholder="Search scheme name, department..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="input-field pl-9"
+                className="input-field has-left-icon"
               />
             </div>
           </div>
 
           {/* State Filter */}
           <div>
-            <label className="label-field">State / Region</label>
-            <select value={state} onChange={(e) => setState(e.target.value)} className="input-field">
+            <label htmlFor="scheme-state" className="label-field">
+              State / Region
+            </label>
+            <select
+              id="scheme-state"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="input-field"
+            >
               <option value="">All States / Pan India</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
+              {INDIAN_STATES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
             </select>
           </div>
 
           {/* Category Filter */}
           <div>
-            <label className="label-field">Category</label>
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="input-field">
+            <label htmlFor="scheme-category" className="label-field">
+              Category
+            </label>
+            <select
+              id="scheme-category"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="input-field"
+            >
               <option value="">All Categories</option>
               <option value="1">MSME & Small Business</option>
               <option value="2">Subsidies & Grants</option>
@@ -132,8 +209,15 @@ export const SchemesPage: React.FC = () => {
 
           {/* Scheme Type Filter */}
           <div>
-            <label className="label-field">Scheme Type</label>
-            <select value={schemeType} onChange={(e) => setSchemeType(e.target.value)} className="input-field">
+            <label htmlFor="scheme-type" className="label-field">
+              Scheme Type
+            </label>
+            <select
+              id="scheme-type"
+              value={schemeType}
+              onChange={(e) => setSchemeType(e.target.value)}
+              className="input-field"
+            >
               <option value="">All Types</option>
               <option value="Subsidy">Subsidy</option>
               <option value="Grant">Grant</option>
@@ -151,6 +235,7 @@ export const SchemesPage: React.FC = () => {
             <button
               type="button"
               onClick={handleResetFilters}
+              aria-label="Reset Filters"
               className="btn-secondary text-xs px-3 py-2.5"
               title="Reset Filters"
             >
@@ -184,7 +269,7 @@ export const SchemesPage: React.FC = () => {
           title="No Schemes Found"
           description="We couldn't find any public government schemes matching your filter parameters. Try clearing your search query or selecting 'All States'."
           action={
-            <button onClick={handleResetFilters} className="btn-primary text-xs">
+            <button type="button" onClick={handleResetFilters} className="btn-primary text-xs">
               Clear All Filters
             </button>
           }

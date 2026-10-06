@@ -17,8 +17,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (err) {
+      console.warn('Invalid user session in localStorage, resetting...', err);
+      localStorage.removeItem('user');
+      return null;
+    }
   });
 
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));

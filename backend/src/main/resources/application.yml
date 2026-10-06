@@ -58,10 +58,12 @@ spring:
 # Common App Settings
 app:
   jwt:
-    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    secret: ${APP_JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: 86400000 # 24 hours
   upload:
-    dir: ./uploads
+    dir: ${APP_UPLOAD_DIR:./uploads}
+  cors:
+    allowed-origins: ${FRONTEND_URL:http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174}
 
 # Official Government API Keys (Environment Variable Overrides Supported)
 api:
@@ -78,10 +80,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,env
+        include: health,info,metrics
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
 
 springdoc:
   api-docs:

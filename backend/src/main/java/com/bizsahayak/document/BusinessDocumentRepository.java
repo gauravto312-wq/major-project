@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface BusinessDocumentRepository extends JpaRepository<BusinessDocument, Long> {
     List<BusinessDocument> findByBusinessProfileId(Long businessId);
+    List<BusinessDocument> findByBusinessProfileUserId(Long userId);
     long countByBusinessProfileId(Long businessId);
     long countByStatus(DocumentStatus status);
 }

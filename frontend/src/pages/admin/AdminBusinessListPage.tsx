@@ -6,7 +6,8 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Badge } from '../../components/Badge';
 import { Pagination } from '../../components/Pagination';
 import { EmptyState } from '../../components/EmptyState';
-import { Building2, Eye, Clock, CheckCircle } from 'lucide-react';
+import { AdminHeaderNav } from '../../components/AdminHeaderNav';
+import { Building2, Eye, Clock, CheckCircle, ShieldCheck } from 'lucide-react';
 
 export const AdminBusinessListPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'PENDING' | 'ALL'>('PENDING');
@@ -36,39 +37,56 @@ export const AdminBusinessListPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider">
-          <Building2 className="w-4 h-4" /> Admin Verification Panel
+    <>
+      <AdminHeaderNav />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Header Banner with Vidhan Bhawan Visual Identity */}
+      <div
+        className="relative rounded-3xl p-6 sm:p-8 text-white shadow-gov-lg overflow-hidden space-y-2 bg-[#173B72]"
+        style={{
+          backgroundImage: "url('/assets/vidhan-bhawan.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#173B72]/95 via-[#173B72]/90 to-[#0F264A]/95 backdrop-blur-[1px]"></div>
+
+        <div className="relative z-10 space-y-1 max-w-3xl">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#C89B3C] uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-[#1B8354]" /> Admin Verification Panel
+          </div>
+          <h1 className="text-2xl font-black text-white">Business Verification Applications</h1>
+          <p className="text-xs text-[#F5F7FA]/90">
+            Inspect registered business details, uploaded GST/UDYAM documents, and issue verification decisions.
+          </p>
         </div>
-        <h1 className="text-2xl font-black text-slate-900">Business Verification Applications</h1>
-        <p className="text-xs text-slate-500">Inspect registered business details, uploaded GST/UDYAM documents, and issue verification decisions.</p>
       </div>
 
       {/* Tabs */}
       <div className="flex border-b border-slate-200 gap-4">
         <button
+          type="button"
           onClick={() => { setActiveTab('PENDING'); setPage(0); }}
-          className={`pb-3 px-2 text-sm font-bold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 px-3 text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all ${
             activeTab === 'PENDING'
-              ? 'border-amber-500 text-amber-600'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-[#B7791F] text-[#B7791F]'
+              : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
           }`}
         >
-          <Clock className="w-4 h-4" />
+          <Clock className="w-4 h-4 text-[#C89B3C]" />
           Pending Verifications
         </button>
 
         <button
+          type="button"
           onClick={() => { setActiveTab('ALL'); setPage(0); }}
-          className={`pb-3 px-2 text-sm font-bold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 px-3 text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all ${
             activeTab === 'ALL'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-[#173B72] text-[#173B72]'
+              : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
           }`}
         >
-          <Building2 className="w-4 h-4" />
+          <Building2 className="w-4 h-4 text-[#173B72]" />
           All Registered Businesses
         </button>
       </div>
@@ -77,10 +95,10 @@ export const AdminBusinessListPage: React.FC = () => {
       {loading ? (
         <LoadingSpinner message="Fetching business verification applications..." />
       ) : businesses && businesses.content.length > 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6 space-y-4">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-gov overflow-hidden p-6 space-y-4">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <thead className="bg-[#F5F7FA] text-[#5E6B7D] uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
                   <th className="py-3.5 px-4">Business Name</th>
                   <th className="py-3.5 px-4">Entity Type</th>
@@ -93,24 +111,24 @@ export const AdminBusinessListPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {businesses.content.map((b) => (
-                  <tr key={b.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-slate-900">{b.businessName}</td>
-                    <td className="py-3.5 px-4 text-slate-600 font-semibold">{b.businessType}</td>
-                    <td className="py-3.5 px-4 text-slate-600">{b.industry}</td>
-                    <td className="py-3.5 px-4 text-slate-600">{b.district}, {b.state}</td>
+                  <tr key={b.id} className="hover:bg-[#F5F7FA]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-[#172033]">{b.businessName}</td>
+                    <td className="py-3.5 px-4 text-[#5E6B7D] font-semibold">{b.businessType}</td>
+                    <td className="py-3.5 px-4 text-[#5E6B7D]">{b.industry}</td>
+                    <td className="py-3.5 px-4 text-[#5E6B7D]">{b.district}, {b.state}</td>
                     <td className="py-3.5 px-4">
                       <Badge status={b.verificationStatus} />
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
-                      {b.submittedAt ? new Date(b.submittedAt).toLocaleDateString() : 'N/A'}
+                    <td className="py-3.5 px-4 text-[#5E6B7D]">
+                      {b.submittedAt ? new Date(b.submittedAt).toLocaleDateString() : 'Draft'}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         to={`/admin/businesses/${b.id}`}
-                        className="btn-primary text-xs py-1.5 px-3 bg-blue-600 hover:bg-blue-700"
+                        className="inline-flex items-center gap-1 btn-primary py-1 px-3 text-xs"
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        Review Profile
+                        Inspect & Verify
                       </Link>
                     </td>
                   </tr>
@@ -124,15 +142,16 @@ export const AdminBusinessListPage: React.FC = () => {
             totalPages={businesses.totalPages}
             totalElements={businesses.totalElements}
             pageSize={businesses.pageSize}
-            onPageChange={(newPage) => setPage(newPage)}
+            onPageChange={(p) => setPage(p)}
           />
         </div>
       ) : (
         <EmptyState
-          title={activeTab === 'PENDING' ? 'No Pending Verifications' : 'No Businesses Registered'}
-          description={activeTab === 'PENDING' ? 'Great job! There are currently no pending business verification applications in queue.' : 'No businesses have registered yet.'}
+          title="No Businesses In Queue"
+          description="There are currently no business verification requests matching this tab."
         />
       )}
-    </div>
+      </div>
+    </>
   );
 };

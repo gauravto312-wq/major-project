@@ -19,6 +19,7 @@ import com.bizsahayak.scheme.SchemeStatus;
 import com.bizsahayak.security.UserPrincipal;
 import com.bizsahayak.tender.TenderRepository;
 import com.bizsahayak.tender.TenderStatus;
+import com.bizsahayak.user.Role;
 import com.bizsahayak.user.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,6 +52,7 @@ public class AdminDashboardController {
     public ResponseEntity<ApiResponse<DashboardStatsDto>> getDashboardStats() {
         DashboardStatsDto stats = DashboardStatsDto.builder()
                 .totalUsers(userRepository.count())
+                .totalCitizens(userRepository.countByRole(Role.ROLE_CITIZEN) + userRepository.countByRole(Role.ROLE_USER))
                 .totalBusinesses(businessProfileRepository.count())
                 .pendingBusinesses(businessProfileRepository.countByVerificationStatus(VerificationStatus.PENDING))
                 .verifiedBusinesses(businessProfileRepository.countByVerificationStatus(VerificationStatus.VERIFIED))

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -34,6 +35,28 @@ public class ApplicationTrackerService {
     public UserApplicationDto trackApplication(Long userId, UserApplicationDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        // Duplicate prevention check for schemes
+        if (dto.getSchemeId() != null) {
+            Optional<UserApplication> existingSchemeApp = applicationRepository.findByUserIdAndSchemeId(userId, dto.getSchemeId());
+            if (existingSchemeApp.isPresent()) {
+                UserApplication app = existingSchemeApp.get();
+                if (dto.getStatus() != null) app.setStatus(dto.getStatus());
+                if (dto.getNotes() != null) app.setNotes(dto.getNotes());
+                return mapToDto(applicationRepository.save(app));
+            }
+        }
+
+        // Duplicate prevention check for tenders
+        if (dto.getTenderId() != null) {
+            Optional<UserApplication> existingTenderApp = applicationRepository.findByUserIdAndTenderId(userId, dto.getTenderId());
+            if (existingTenderApp.isPresent()) {
+                UserApplication app = existingTenderApp.get();
+                if (dto.getStatus() != null) app.setStatus(dto.getStatus());
+                if (dto.getNotes() != null) app.setNotes(dto.getNotes());
+                return mapToDto(applicationRepository.save(app));
+            }
+        }
 
         Scheme scheme = null;
         if (dto.getSchemeId() != null) {

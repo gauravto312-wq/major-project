@@ -16,23 +16,23 @@ export const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommen
   const state = isScheme ? scheme.state : tender?.state;
 
   const getScoreBadgeColor = (score: number) => {
-    if (score >= 85) return 'bg-emerald-500 text-white shadow-emerald-200';
-    if (score >= 70) return 'bg-blue-600 text-white shadow-blue-200';
-    return 'bg-amber-500 text-white shadow-amber-200';
+    if (score >= 85) return 'bg-[#1B8354] text-white';
+    if (score >= 70) return 'bg-[#2456A6] text-white';
+    return 'bg-[#B7791F] text-white';
   };
 
   return (
-    <div className="card p-5 border-2 border-blue-100 hover:border-blue-300 transition-all flex flex-col justify-between relative bg-gradient-to-b from-white to-blue-50/20">
+    <article className="card p-5 border border-slate-200 shadow-gov hover:border-[#6F9ED8] hover:shadow-gov-md transition-all flex flex-col justify-between relative bg-white/95 group">
       <div>
         {/* Match Header */}
         <div className="flex justify-between items-center mb-3">
-          <span className="text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded bg-blue-100 text-blue-800 flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
+          <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-[#E5EEF9] text-[#173B72] border border-[#C7DBF2] flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-[#C89B3C]" />
             {opportunityType} MATCH
           </span>
 
           <div
-            className={`px-3 py-1 rounded-full text-xs font-black shadow-sm flex items-center gap-1 ${getScoreBadgeColor(
+            className={`px-3 py-1 rounded-md text-xs font-bold shadow-xs flex items-center gap-1 ${getScoreBadgeColor(
               matchScore
             )}`}
           >
@@ -42,38 +42,55 @@ export const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommen
 
         {/* Title */}
         <Link to={slug} className="block group">
-          <h3 className="text-base font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="text-base font-bold text-[#172033] leading-snug line-clamp-2 mb-2 group-hover:text-[#173B72] transition-colors">
             {title}
           </h3>
         </Link>
 
-        <div className="text-xs text-slate-500 mb-3">
-          <span className="font-semibold text-slate-700">{department}</span> • <span>{state}</span>
+        <div className="text-xs text-[#5E6B7D] mb-3">
+          <span className="font-semibold text-[#172033]">{department}</span> • <span>{state}</span>
         </div>
 
         {/* Why this matches section */}
-        <div className="bg-white p-3 rounded-xl border border-slate-200/80 mb-4 shadow-2xs">
-          <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            Why this matches your business:
+        <div className="bg-[#F5F7FA] p-3 rounded-xl border border-slate-200/80 mb-4">
+          <div className="text-[11px] font-bold text-[#173B72] uppercase tracking-wider mb-2 flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#1B8354]" />
+            Why this matches your enterprise:
           </div>
-          <ul className="space-y-1 text-xs text-slate-600">
-            {matchReasons.map((reason, idx) => (
-              <li key={idx} className="flex items-center gap-1.5 font-medium text-slate-700">
-                <span className="text-emerald-600 font-bold">{reason}</span>
-              </li>
-            ))}
+          <ul className="space-y-1 text-xs text-[#5E6B7D]">
+            {matchReasons && matchReasons.length > 0 ? (
+              matchReasons.map((reason, idx) => (
+                <li key={idx} className="flex items-start gap-1.5">
+                  <span className="text-[#C89B3C] font-bold">•</span>
+                  <span>{reason}</span>
+                </li>
+              ))
+            ) : (
+              <li className="italic text-slate-400">Matched on industry sector & eligibility parameters</li>
+            )}
           </ul>
         </div>
       </div>
 
-      <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between">
-        <span className="text-xs text-slate-500 font-medium">Verified Eligibility</span>
-        <Link to={slug} className="btn-primary text-xs py-1.5 px-3">
-          View Opportunity
-          <ArrowRight className="w-3.5 h-3.5" />
+      {/* Action Footer */}
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
+        <Link
+          to={slug}
+          className="text-[#173B72] font-bold hover:text-[#2456A6] flex items-center gap-1 text-xs"
+        >
+          View Details
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
+
+        {isScheme && scheme.slug && (
+          <Link
+            to={`/schemes/${scheme.slug}/assistant`}
+            className="bg-[#173B72] hover:bg-[#2456A6] text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+          >
+            <Sparkles className="w-3 h-3 text-[#C89B3C]" /> Launch Assistant
+          </Link>
+        )}
       </div>
-    </div>
+    </article>
   );
 };

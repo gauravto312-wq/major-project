@@ -1,6 +1,5 @@
 package com.bizsahayak.saved.service;
 
-import com.bizsahayak.exception.DuplicateResourceException;
 import com.bizsahayak.exception.ResourceNotFoundException;
 import com.bizsahayak.saved.SavedScheme;
 import com.bizsahayak.saved.SavedSchemeRepository;
@@ -39,7 +38,8 @@ public class SavedOpportunityService {
     @Transactional
     public void saveScheme(Long userId, Long schemeId) {
         if (savedSchemeRepository.existsByUserIdAndSchemeId(userId, schemeId)) {
-            throw new DuplicateResourceException("Scheme is already saved");
+            log.info("User {} scheme {} is already saved. Idempotent action.", userId, schemeId);
+            return;
         }
 
         User user = userRepository.findById(userId)
@@ -73,7 +73,8 @@ public class SavedOpportunityService {
     @Transactional
     public void saveTender(Long userId, Long tenderId) {
         if (savedTenderRepository.existsByUserIdAndTenderId(userId, tenderId)) {
-            throw new DuplicateResourceException("Tender is already saved");
+            log.info("User {} tender {} is already saved. Idempotent action.", userId, tenderId);
+            return;
         }
 
         User user = userRepository.findById(userId)

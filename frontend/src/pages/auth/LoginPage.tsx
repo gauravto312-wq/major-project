@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import { Alert } from '../../components/Alert';
-import { Building2, Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
+import { Building2, Mail, Lock, LogIn, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ export const LoginPage: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -56,77 +57,101 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 sm:px-6 py-12">
-      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl">
+    <div className="min-h-[82vh] flex items-center justify-center px-4 sm:px-6 py-12 relative">
+      <div className="w-full max-w-md space-y-6 bg-white/95 backdrop-blur-sm p-8 rounded-2xl border border-slate-200/90 shadow-gov-lg">
+        {/* Header Branding */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-bold mx-auto shadow-md">
-            <Building2 className="w-6 h-6 text-amber-400" />
+          <div className="w-12 h-12 rounded-xl bg-[#173B72] border border-[#C89B3C]/50 flex items-center justify-center text-white font-bold mx-auto shadow-sm">
+            <Building2 className="w-6 h-6 text-[#C89B3C]" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900">Sign in to BizSahayak</h2>
-          <p className="text-xs text-slate-500">Access your business profile, scheme recommendations, and saved items</p>
+          <div className="text-[11px] font-bold text-[#173B72] uppercase tracking-wider">
+            Official Access Portal
+          </div>
+          <h1 className="text-2xl font-black text-[#172033] tracking-tight">Sign in to BizSahayak</h1>
+          <p className="text-xs text-[#5E6B7D] leading-relaxed">
+            Access your registered business profile, personalized scheme recommendations, and application tracker
+          </p>
         </div>
 
         {error && <Alert type="error" message={error} onClose={() => setError(null)} />}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label-field">Email Address</label>
+            <label htmlFor="login-email" className="label-field">
+              Email Address *
+            </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               <input
+                id="login-email"
                 type="email"
                 required
-                placeholder="e.g. admin@bizsahayak.in or business@demo.com"
+                autoComplete="username"
+                placeholder="name@business.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="input-field pl-9"
+                className="input-field has-left-icon"
               />
             </div>
           </div>
 
           <div>
-            <label className="label-field">Password</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label htmlFor="login-password" className="label-field !mb-0">
+                Password *
+              </label>
+            </div>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               <input
-                type="password"
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete="current-password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="input-field pl-9"
+                className="input-field has-left-icon has-right-icon"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-[#173B72] transition-colors focus:outline-none focus:ring-2 focus:ring-[#173B72] rounded cursor-pointer"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary w-full py-3 text-sm font-bold bg-blue-600 hover:bg-blue-700 mt-2"
+            className="btn-primary w-full py-3 text-sm font-bold bg-[#173B72] hover:bg-[#2456A6] mt-2 border border-[#173B72] shadow-gov"
           >
             <LogIn className="w-4 h-4" />
             {loading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Demo Credentials Box */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs space-y-2">
-          <span className="font-bold text-slate-800 block uppercase text-[10px] tracking-wider">Default Test Credentials:</span>
-          <div className="flex justify-between items-center text-slate-600">
-            <span><strong>Admin:</strong> admin@bizsahayak.in</span>
-            <span className="font-mono bg-white px-1.5 py-0.5 rounded border">Admin@123456</span>
+        <div className="pt-4 border-t border-slate-100 text-center text-xs text-[#5E6B7D] space-y-2">
+          <div>
+            Don't have a business account?{' '}
+            <Link
+              to="/register/business"
+              className="text-[#173B72] font-bold hover:text-[#2456A6] hover:underline inline-flex items-center gap-1"
+            >
+              Register Business Profile <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-          <div className="flex justify-between items-center text-slate-600">
-            <span><strong>Verified Business:</strong> business@demo.com</span>
-            <span className="font-mono bg-white px-1.5 py-0.5 rounded border">Demo@123456</span>
+          <div>
+            <Link
+              to="/admin/login"
+              className="text-slate-400 hover:text-[#173B72] text-[11px] font-medium transition-colors"
+            >
+              Administrative Gateway →
+            </Link>
           </div>
-        </div>
-
-        <div className="text-center pt-2 text-xs text-slate-600">
-          Don't have a business account?{' '}
-          <Link to="/register/business" className="text-blue-600 font-bold hover:underline inline-flex items-center gap-0.5">
-            Register Business Profile <ArrowRight className="w-3 h-3" />
-          </Link>
         </div>
       </div>
     </div>

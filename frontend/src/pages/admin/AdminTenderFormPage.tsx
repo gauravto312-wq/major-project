@@ -5,7 +5,44 @@ import { tenderService } from '../../services/tenderService';
 import { Tender, TenderStatus } from '../../types';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { Alert } from '../../components/Alert';
-import { ArrowLeft, Save, Send } from 'lucide-react';
+import { ArrowLeft, Save, Send, FileText } from 'lucide-react';
+
+const INDIAN_STATES = [
+  'All India',
+  'Uttar Pradesh',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttarakhand',
+  'West Bengal',
+  'Delhi (NCT)',
+  'Jammu & Kashmir',
+  'Ladakh',
+  'Chandigarh',
+  'Puducherry',
+];
 
 export const AdminTenderFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -95,27 +132,41 @@ export const AdminTenderFormPage: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading tender payload..." />;
+    return <LoadingSpinner message="Loading tender details..." />;
   }
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link to="/admin/tenders" className="text-xs font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-1">
-          <ArrowLeft className="w-4 h-4" /> Back to Tenders Management
-        </Link>
-        <h1 className="text-xl font-black text-slate-900">
-          {isEditMode ? 'Edit Government Tender' : 'Add New Government Tender'}
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-4 gap-3">
+        <div>
+          <Link
+            to="/admin/tenders"
+            className="text-xs font-bold text-[#5E6B7D] hover:text-[#173B72] flex items-center gap-1.5 transition-colors mb-1"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Tenders Management
+          </Link>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 bg-[#F3E8D0] text-[#173B72] rounded-lg">
+              <FileText className="w-5 h-5" />
+            </span>
+            <h1 className="text-xl font-black text-[#172033]">
+              {isEditMode ? 'Edit Government Tender' : 'Add New Government Tender'}
+            </h1>
+          </div>
+        </div>
+        <div className="text-xs text-[#5E6B7D]">
+          Portal Procurement Management
+        </div>
       </div>
 
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
 
-      <form onSubmit={(e) => handleSubmit(e)} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+      <form onSubmit={(e) => handleSubmit(e)} className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-gov space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="label-field">Tender Title *</label>
+            <label htmlFor="t-title" className="label-field">Tender Title *</label>
             <input
+              id="t-title"
               type="text"
               name="title"
               required
@@ -127,8 +178,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Tender Reference Number *</label>
+            <label htmlFor="t-number" className="label-field">Tender Reference Number *</label>
             <input
+              id="t-number"
               type="text"
               name="tenderNumber"
               required
@@ -140,8 +192,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Organization / Procuring Entity *</label>
+            <label htmlFor="t-org" className="label-field">Organization / Procuring Entity *</label>
             <input
+              id="t-org"
               type="text"
               name="organization"
               required
@@ -153,8 +206,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Department</label>
+            <label htmlFor="t-dept" className="label-field">Department</label>
             <input
+              id="t-dept"
               type="text"
               name="department"
               value={formData.department || ''}
@@ -165,8 +219,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Estimated Tender Value (INR ₹) *</label>
+            <label htmlFor="t-val" className="label-field">Estimated Tender Value (INR ₹) *</label>
             <input
+              id="t-val"
               type="number"
               name="estimatedValue"
               required
@@ -178,20 +233,24 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">State / Region *</label>
-            <select name="state" value={formData.state || 'Uttar Pradesh'} onChange={handleChange} className="input-field">
-              <option value="All India">All India / Central Tender</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Karnataka">Karnataka</option>
+            <label htmlFor="t-state" className="label-field">State / Region *</label>
+            <select
+              id="t-state"
+              name="state"
+              value={formData.state || 'Uttar Pradesh'}
+              onChange={handleChange}
+              className="input-field"
+            >
+              {INDIAN_STATES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label className="label-field">Closing Date / Bid Submission Deadline</label>
+            <label htmlFor="t-closing" className="label-field">Closing Date / Bid Submission Deadline</label>
             <input
+              id="t-closing"
               type="date"
               name="closingDate"
               value={formData.closingDate || ''}
@@ -202,8 +261,9 @@ export const AdminTenderFormPage: React.FC = () => {
         </div>
 
         <div>
-          <label className="label-field">Detailed Tender Description & Scope of Work *</label>
+          <label htmlFor="t-desc" className="label-field">Detailed Tender Description & Scope of Work *</label>
           <textarea
+            id="t-desc"
             name="description"
             rows={4}
             required
@@ -216,8 +276,9 @@ export const AdminTenderFormPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Bidder Eligibility Requirements</label>
+            <label htmlFor="t-elig" className="label-field">Bidder Eligibility Requirements</label>
             <textarea
+              id="t-elig"
               name="eligibility"
               rows={3}
               value={formData.eligibility || ''}
@@ -228,8 +289,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Required Submission Documents</label>
+            <label htmlFor="t-docs" className="label-field">Required Submission Documents</label>
             <textarea
+              id="t-docs"
               name="requiredDocuments"
               rows={3}
               value={formData.requiredDocuments || ''}
@@ -242,8 +304,9 @@ export const AdminTenderFormPage: React.FC = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="label-field">Official Tender URL (GeM / eProcure)</label>
+            <label htmlFor="t-tenderurl" className="label-field">Official Tender URL (GeM / eProcure)</label>
             <input
+              id="t-tenderurl"
               type="url"
               name="officialTenderUrl"
               value={formData.officialTenderUrl || ''}
@@ -254,8 +317,9 @@ export const AdminTenderFormPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="label-field">Official Source URL</label>
+            <label htmlFor="t-srcurl" className="label-field">Official Source URL</label>
             <input
+              id="t-srcurl"
               type="url"
               name="officialSourceUrl"
               value={formData.officialSourceUrl || ''}
@@ -267,13 +331,13 @@ export const AdminTenderFormPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4 pt-2">
-          <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs font-bold text-[#172033] cursor-pointer">
             <input
               type="checkbox"
               name="featured"
               checked={Boolean(formData.featured)}
               onChange={handleChange}
-              className="w-4 h-4 text-indigo-600 rounded"
+              className="w-4 h-4 text-[#173B72] rounded"
             />
             Mark as Featured Tender on Homepage
           </label>
@@ -292,7 +356,7 @@ export const AdminTenderFormPage: React.FC = () => {
             type="button"
             onClick={(e) => handleSubmit(e, 'PUBLISHED')}
             disabled={saving}
-            className="btn-primary text-xs py-2.5 px-6 font-bold bg-indigo-600 hover:bg-indigo-700"
+            className="btn-primary text-xs py-2.5 px-6 font-bold bg-[#173B72] hover:bg-[#2456A6]"
           >
             <Send className="w-4 h-4" />
             {saving ? 'Publishing...' : 'Save & Publish Tender Live'}

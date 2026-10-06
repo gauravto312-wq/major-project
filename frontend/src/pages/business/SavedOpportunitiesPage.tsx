@@ -37,43 +37,46 @@ export const SavedOpportunitiesPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Banner */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider">
-          <Bookmark className="w-4 h-4" /> Bookmarked Opportunities
+      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-gov space-y-2">
+        <div className="flex items-center gap-2 text-xs font-bold text-[#C89B3C] uppercase tracking-wider">
+          <Bookmark className="w-4 h-4 text-[#C89B3C]" /> Bookmarked Opportunities
         </div>
-        <h1 className="text-2xl font-black text-slate-900">Saved Schemes & Tenders</h1>
-        <p className="text-xs text-slate-500">Quickly access government opportunities you have bookmarked for review or application.</p>
+        <h1 className="text-2xl font-black text-[#172033]">Saved Schemes & Tenders</h1>
+        <p className="text-xs text-[#5E6B7D]">Quickly access government opportunities you have bookmarked for review or application.</p>
       </div>
 
       {/* Tabs */}
       <div className="flex border-b border-slate-200 gap-4">
         <button
+          type="button"
           onClick={() => setActiveTab('SCHEMES')}
-          className={`pb-3 px-2 text-sm font-bold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 px-3 text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all ${
             activeTab === 'SCHEMES'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-[#173B72] text-[#173B72]'
+              : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
           }`}
         >
-          <FileText className="w-4 h-4" />
+          <FileText className="w-4 h-4 text-[#C89B3C]" />
           Saved Schemes ({savedSchemes.length})
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('TENDERS')}
-          className={`pb-3 px-2 text-sm font-bold flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 px-3 text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 transition-all ${
             activeTab === 'TENDERS'
-              ? 'border-indigo-600 text-indigo-600'
-              : 'border-transparent text-slate-500 hover:text-slate-900'
+              ? 'border-[#173B72] text-[#173B72]'
+              : 'border-transparent text-[#5E6B7D] hover:text-[#172033]'
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className="w-4 h-4 text-[#C89B3C]" />
           Saved Tenders ({savedTenders.length})
         </button>
       </div>
 
+      {/* Grid */}
       {loading ? (
-        <LoadingSpinner message="Fetching your saved opportunities..." />
+        <LoadingSpinner message="Fetching your saved bookmarks..." />
       ) : activeTab === 'SCHEMES' ? (
         savedSchemes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -82,14 +85,18 @@ export const SavedOpportunitiesPage: React.FC = () => {
                 key={scheme.id}
                 scheme={scheme}
                 isSavedInitial={true}
-                onSaveToggle={() => loadSavedItems()}
+                onSaveToggle={(saved) => {
+                  if (!saved) {
+                    setSavedSchemes((prev) => prev.filter((s) => s.id !== scheme.id));
+                  }
+                }}
               />
             ))}
           </div>
         ) : (
           <EmptyState
-            title="No Saved Schemes"
-            description="Click the bookmark icon on any scheme card to save it to your personal list."
+            title="No Schemes Saved Yet"
+            description="Browse central and state government schemes and click the bookmark icon to save them for later."
           />
         )
       ) : savedTenders.length > 0 ? (
@@ -99,14 +106,18 @@ export const SavedOpportunitiesPage: React.FC = () => {
               key={tender.id}
               tender={tender}
               isSavedInitial={true}
-              onSaveToggle={() => loadSavedItems()}
+              onSaveToggle={(saved) => {
+                if (!saved) {
+                  setSavedTenders((prev) => prev.filter((t) => t.id !== tender.id));
+                }
+              }}
             />
           ))}
         </div>
       ) : (
         <EmptyState
-          title="No Saved Tenders"
-          description="Click the bookmark icon on any tender card to save it to your personal list."
+          title="No Tenders Saved Yet"
+          description="Browse active procurement notices and bookmark tenders relevant to your supply capabilities."
         />
       )}
     </div>

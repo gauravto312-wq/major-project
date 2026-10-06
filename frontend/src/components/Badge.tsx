@@ -13,38 +13,39 @@ export const Badge: React.FC<BadgeProps> = ({ status }) => {
       case 'ACTIVE':
       case 'APPROVED':
       case 'COMPLETED':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        return 'bg-[#EBF7F0] text-[#1B8354] border-[#A3D9BD]';
       case 'PENDING':
       case 'PENDING_REVIEW':
       case 'IMPORTED':
       case 'DRAFT':
       case 'PREPARING':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-[#FEF7E6] text-[#B7791F] border-[#F8D88E]';
       case 'REJECTED':
       case 'CANCELLED':
       case 'EXPIRED':
-        return 'bg-rose-100 text-rose-800 border-rose-200';
+        return 'bg-[#FDF2F2] text-[#C53030] border-[#F7A3A3]';
       case 'CORRECTION_REQUIRED':
       case 'INACTIVE':
       case 'CLOSED':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-slate-100 text-[#5E6B7D] border-slate-300';
       case 'INTERESTED':
       case 'APPLIED':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-[#E5EEF9] text-[#173B72] border-[#C7DBF2]';
       case 'ARCHIVED':
-        return 'bg-slate-100 text-slate-700 border-slate-200';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'bg-slate-100 text-[#5E6B7D] border-slate-200';
     }
   };
 
+  const formattedStatus = status ? status.replace(/_/g, ' ') : '';
+
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getBadgeStyle(
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold border tracking-wide uppercase ${getBadgeStyle(
         status
       )}`}
     >
-      {status?.replace('_', ' ')}
+      {formattedStatus}
     </span>
   );
 };

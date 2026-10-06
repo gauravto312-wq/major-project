@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DashboardStatsDto {
     private long totalUsers;
+    private long totalCitizens;
     private long totalBusinesses;
     private long pendingBusinesses;
     private long verifiedBusinesses;

@@ -33,6 +33,9 @@ public class SchemeNormalizer {
             category = categoryRepository.findBySlug("msme-small-business").orElse(null);
         }
 
+        boolean autoPub = (source != null && source.isAutoPublish());
+        SchemeStatus initialStatus = autoPub ? SchemeStatus.PUBLISHED : SchemeStatus.PENDING_REVIEW;
+
         return Scheme.builder()
                 .title(sanitize(raw.getTitle(), 195))
                 .slug(slug)
@@ -51,8 +54,9 @@ public class SchemeNormalizer {
                 .startDate(raw.getStartDate())
                 .deadline(raw.getDeadline())
                 .officialApplicationUrl(raw.getOfficialApplicationUrl())
-                .officialSourceUrl(StringUtils.hasText(raw.getOfficialSourceUrl()) ? raw.getOfficialSourceUrl() : source.getBaseUrl())
-                .status(SchemeStatus.PENDING_REVIEW) // Default to admin review queue
+                .officialSourceUrl(StringUtils.hasText(raw.getOfficialSourceUrl()) ? raw.getOfficialSourceUrl() : (source != null ? source.getBaseUrl() : ""))
+                .status(initialStatus)
+                .publishedAt(autoPub ? LocalDateTime.now() : null)
                 .featured(false)
                 .targetIndustries(StringUtils.hasText(raw.getTargetIndustries()) ? sanitize(raw.getTargetIndustries(), 245) : "MSME, Manufacturing, Agriculture")
                 .targetBusinessTypes(StringUtils.hasText(raw.getTargetBusinessTypes()) ? sanitize(raw.getTargetBusinessTypes(), 245) : "MSME, Proprietorship, Private Limited")

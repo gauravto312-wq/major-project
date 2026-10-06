@@ -1,13 +1,16 @@
 package com.bizsahayak.government.controller;
 
 import com.bizsahayak.common.ApiResponse;
+import com.bizsahayak.government.dto.ApiTestResultDto;
 import com.bizsahayak.government.dto.GovernmentSourceDto;
 import com.bizsahayak.government.dto.GovernmentSyncLogDto;
 import com.bizsahayak.government.dto.SyncResultDto;
 import com.bizsahayak.government.service.GovernmentSyncService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/admin/government-sources")
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
-@Tag(name = "Admin Government Data Sources", description = "Management and Synchronization of Government Sources & Feeds")
+@Tag(name = "Admin Government Data Sources", description = "Management, Connectivity Testing and Synchronization of Government Sources & Feeds")
 public class AdminGovernmentSourceController {
 
     private final GovernmentSyncService syncService;
@@ -35,6 +38,29 @@ public class AdminGovernmentSourceController {
     public ResponseEntity<ApiResponse<GovernmentSourceDto>> getSourceById(@PathVariable Long id) {
         GovernmentSourceDto source = syncService.getSourceById(id);
         return ResponseEntity.ok(ApiResponse.success(source));
+    }
+
+    @PostMapping
+    @Operation(summary = "Configure a new government data source / API")
+    public ResponseEntity<ApiResponse<GovernmentSourceDto>> createSource(@Valid @RequestBody GovernmentSourceDto dto) {
+        GovernmentSourceDto created = syncService.createSource(dto);
+        return new ResponseEntity<>(ApiResponse.success(created, "Government source configured successfully"), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing government source / API configuration")
+    public ResponseEntity<ApiResponse<GovernmentSourceDto>> updateSource(
+            @PathVariable Long id,
+            @Valid @RequestBody GovernmentSourceDto dto) {
+        GovernmentSourceDto updated = syncService.updateSource(id, dto);
+        return ResponseEntity.ok(ApiResponse.success(updated, "Government source updated successfully"));
+    }
+
+    @PostMapping("/{id}/test")
+    @Operation(summary = "Test connectivity, HTTP status code and response payload for a government source API")
+    public ResponseEntity<ApiResponse<ApiTestResultDto>> testSourceApi(@PathVariable Long id) {
+        ApiTestResultDto result = syncService.testSourceApi(id);
+        return ResponseEntity.ok(ApiResponse.success(result, result.isWorking() ? "API Test Successful" : "API Test Failed"));
     }
 
     @PostMapping("/{id}/sync")

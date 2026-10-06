@@ -37,10 +37,10 @@ public class AuthService {
             throw new DuplicateResourceException("Email address is already registered: " + request.getEmail());
         }
 
-        // Default to ROLE_USER if role not specified or if client attempts ADMIN registration via public API
+        // Default to ROLE_CITIZEN if role not specified or if client attempts ADMIN registration via public API
         Role role = request.getRole();
-        if (role == Role.ROLE_ADMIN) {
-            role = Role.ROLE_USER; // Admins can only be created internally/by existing admins
+        if (role == null || role == Role.ROLE_ADMIN) {
+            role = Role.ROLE_CITIZEN; // Admins can only be created internally
         }
 
         User user = User.builder()

@@ -1,4 +1,4 @@
-export type Role = 'ROLE_USER' | 'ROLE_BUSINESS' | 'ROLE_ADMIN';
+export type Role = 'ROLE_USER' | 'ROLE_CITIZEN' | 'ROLE_BUSINESS' | 'ROLE_ADMIN';
 
 export type VerificationStatus = 'NOT_SUBMITTED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'CORRECTION_REQUIRED';
 
@@ -179,9 +179,48 @@ export interface NotificationItem {
   message: string;
   type?: string;
   actionUrl?: string;
+  entityType?: string;
+  entityId?: number;
+  route?: string;
   readStatus: boolean;
   createdAt: string;
 }
+
+export interface EligibilityCheckItem {
+  criterion: string;
+  value: string;
+  passed: boolean;
+  message: string;
+}
+
+export interface RequiredDocumentItem {
+  documentName: string;
+  required: boolean;
+  notes?: string;
+}
+
+export interface SchemeAssistantDto {
+  schemeId: number;
+  schemeTitle: string;
+  slug: string;
+  department?: string;
+  ministry?: string;
+  schemeType?: string;
+  categoryName?: string;
+  officialApplicationUrl?: string;
+  officialSourceUrl?: string;
+  eligibilityRating: 'ELIGIBLE' | 'LIKELY_ELIGIBLE' | 'NEEDS_VERIFICATION' | 'NOT_ELIGIBLE';
+  eligibilityChecks: EligibilityCheckItem[];
+  requiredDocumentsList: RequiredDocumentItem[];
+  applicationSteps: string[];
+  rawApplicationProcess?: string;
+  applicationMode: string;
+  applicationDestinationStatus?: 'DIRECT_APPLICATION' | 'APPLICATION_LOGIN' | 'PORTAL_REQUIRES_NAVIGATION' | 'OFFICIAL_INFORMATION_ONLY' | 'UNAVAILABLE';
+  deadline?: string;
+  daysRemaining?: number;
+  currentTrackerStatus: string;
+}
+
 
 export interface AuditLog {
   id: number;
@@ -194,8 +233,41 @@ export interface AuditLog {
   createdAt: string;
 }
 
+export interface CitizenDto {
+  id: number;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: Role;
+  active: boolean;
+  createdAt?: string;
+  savedSchemesCount: number;
+  trackedApplicationsCount: number;
+  notificationsCount: number;
+}
+
+export interface CitizenDashboardDto {
+  userId: number;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: string;
+  createdAt?: string;
+  savedSchemesCount: number;
+  savedTendersCount: number;
+  totalTrackedApplicationsCount: number;
+  unreadNotificationsCount: number;
+  newSchemes: Scheme[];
+  trackedStatusCounts: Record<string, number>;
+  upcomingDeadlines: Scheme[];
+  recentNotifications: NotificationItem[];
+  savedSchemes: Scheme[];
+  savedTenders: Tender[];
+}
+
 export interface DashboardStats {
   totalUsers: number;
+  totalCitizens?: number;
   totalBusinesses: number;
   pendingBusinesses: number;
   verifiedBusinesses: number;

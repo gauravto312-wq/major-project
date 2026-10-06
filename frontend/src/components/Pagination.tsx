@@ -22,15 +22,17 @@ export const Pagination: React.FC<PaginationProps> = ({
   const endItem = Math.min((currentPage + 1) * pageSize, totalElements);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 border-t border-slate-200">
-      <div className="text-xs text-slate-500 font-medium">
-        Showing <span className="font-bold text-slate-900">{startItem}</span> to{' '}
-        <span className="font-bold text-slate-900">{endItem}</span> of{' '}
-        <span className="font-bold text-slate-900">{totalElements}</span> results
+    <nav aria-label="Pagination Navigation" className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 border-t border-slate-200">
+      <div className="text-xs text-[#5E6B7D] font-medium">
+        Showing <span className="font-bold text-[#173B72]">{startItem}</span> to{' '}
+        <span className="font-bold text-[#173B72]">{endItem}</span> of{' '}
+        <span className="font-bold text-[#173B72]">{totalElements}</span> opportunities
       </div>
 
       <div className="flex items-center space-x-2">
         <button
+          type="button"
+          aria-label="Previous Page"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 0}
           className="btn-secondary py-1.5 px-3 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
@@ -39,11 +41,13 @@ export const Pagination: React.FC<PaginationProps> = ({
           Previous
         </button>
 
-        <span className="text-xs font-semibold text-slate-700 px-2">
+        <span className="text-xs font-bold text-[#172033] px-2 bg-white border border-slate-200 py-1.5 rounded-md shadow-xs">
           Page {currentPage + 1} of {totalPages}
         </span>
 
         <button
+          type="button"
+          aria-label="Next Page"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages - 1}
           className="btn-secondary py-1.5 px-3 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
@@ -52,6 +56,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
-    </div>
+    </nav>
   );
 };

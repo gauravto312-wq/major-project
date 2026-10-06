@@ -3,11 +3,7 @@ package com.bizsahayak.government.service;
 import com.bizsahayak.exception.ResourceNotFoundException;
 import com.bizsahayak.government.client.DataGovInApiClient;
 import com.bizsahayak.government.client.MySchemeApiClient;
-import com.bizsahayak.government.dto.GovernmentSourceDto;
-import com.bizsahayak.government.dto.GovernmentSyncLogDto;
-import com.bizsahayak.government.dto.RawSchemeDto;
-import com.bizsahayak.government.dto.RawTenderDto;
-import com.bizsahayak.government.dto.SyncResultDto;
+import com.bizsahayak.government.dto.*;
 import com.bizsahayak.government.model.GovernmentSource;
 import com.bizsahayak.government.model.GovernmentSyncLog;
 import com.bizsahayak.government.model.SyncStatus;
@@ -17,15 +13,15 @@ import com.bizsahayak.government.repository.GovernmentSourceRepository;
 import com.bizsahayak.government.repository.GovernmentSyncLogRepository;
 import com.bizsahayak.scheme.Scheme;
 import com.bizsahayak.scheme.SchemeRepository;
-import com.bizsahayak.scheme.SchemeStatus;
 import com.bizsahayak.tender.Tender;
 import com.bizsahayak.tender.TenderRepository;
-import com.bizsahayak.tender.TenderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,6 +57,56 @@ public class GovernmentSyncService {
     }
 
     @Transactional
+    public GovernmentSourceDto createSource(GovernmentSourceDto dto) {
+        GovernmentSource source = GovernmentSource.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .providerCode(dto.getProviderCode().toUpperCase().replaceAll("[^A-Z0-9_]", "_"))
+                .sourceType(dto.getSourceType())
+                .contentType(dto.getContentType())
+                .baseUrl(dto.getBaseUrl())
+                .apiUrl(dto.getApiUrl())
+                .documentationUrl(dto.getDocumentationUrl())
+                .termsUrl(dto.getTermsUrl())
+                .authenticationType(dto.getAuthenticationType() != null ? dto.getAuthenticationType() : "NONE")
+                .credentialReference(dto.getCredentialReference())
+                .active(dto.isActive())
+                .autoPublish(dto.isAutoPublish())
+                .syncFrequency(dto.getSyncFrequency() != null ? dto.getSyncFrequency() : "0 0 */6 * * *")
+                .rateLimitNotes(dto.getRateLimitNotes())
+                .build();
+
+        GovernmentSource saved = sourceRepository.save(source);
+        log.info("Created government source {}", saved.getName());
+        return mapSourceToDto(saved);
+    }
+
+    @Transactional
+    public GovernmentSourceDto updateSource(Long id, GovernmentSourceDto dto) {
+        GovernmentSource source = sourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("GovernmentSource", "id", id));
+
+        source.setName(dto.getName());
+        source.setDescription(dto.getDescription());
+        source.setSourceType(dto.getSourceType());
+        source.setContentType(dto.getContentType());
+        source.setBaseUrl(dto.getBaseUrl());
+        source.setApiUrl(dto.getApiUrl());
+        source.setDocumentationUrl(dto.getDocumentationUrl());
+        source.setTermsUrl(dto.getTermsUrl());
+        source.setAuthenticationType(dto.getAuthenticationType());
+        source.setCredentialReference(dto.getCredentialReference());
+        source.setActive(dto.isActive());
+        source.setAutoPublish(dto.isAutoPublish());
+        source.setSyncFrequency(dto.getSyncFrequency());
+        source.setRateLimitNotes(dto.getRateLimitNotes());
+
+        GovernmentSource saved = sourceRepository.save(source);
+        log.info("Updated government source {}", saved.getName());
+        return mapSourceToDto(saved);
+    }
+
+    @Transactional
     public GovernmentSourceDto updateSourceStatus(Long id, boolean active) {
         GovernmentSource source = sourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("GovernmentSource", "id", id));
@@ -75,6 +121,43 @@ public class GovernmentSyncService {
         return syncLogRepository.findBySourceIdOrderByStartedAtDesc(sourceId).stream()
                 .map(this::mapLogToDto)
                 .collect(Collectors.toList());
+    }
+
+    public ApiTestResultDto testSourceApi(Long sourceId) {
+        GovernmentSource source = sourceRepository.findById(sourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("GovernmentSource", "id", sourceId));
+
+        String targetUrl = StringUtils.hasText(source.getApiUrl()) ? source.getApiUrl() : source.getBaseUrl();
+        RestTemplate restTemplate = new RestTemplate();
+        long start = System.currentTimeMillis();
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(targetUrl, String.class);
+            long latency = System.currentTimeMillis() - start;
+
+            boolean isSuccess = response.getStatusCode().is2xxSuccessful();
+            return ApiTestResultDto.builder()
+                    .sourceName(source.getName())
+                    .targetUrl(targetUrl)
+                    .working(isSuccess)
+                    .httpStatusCode(response.getStatusCode().value())
+                    .responseTimeMs(latency)
+                    .message(isSuccess ? "API Working! Received 200 OK response from official government portal." : "API returned non-2xx status code.")
+                    .details("Content Length: " + (response.getBody() != null ? response.getBody().length() : 0) + " bytes")
+                    .build();
+        } catch (Exception ex) {
+            long latency = System.currentTimeMillis() - start;
+            log.warn("API Test failed for source {}: {}", source.getName(), ex.getMessage());
+            return ApiTestResultDto.builder()
+                    .sourceName(source.getName())
+                    .targetUrl(targetUrl)
+                    .working(false)
+                    .httpStatusCode(500)
+                    .responseTimeMs(latency)
+                    .message("API Test Failed: Could not connect to target government endpoint.")
+                    .details("Safe Error Diagnostics: " + ex.getMessage())
+                    .build();
+        }
     }
 
     @Transactional
@@ -297,8 +380,9 @@ public class GovernmentSyncService {
                 .documentationUrl(s.getDocumentationUrl())
                 .termsUrl(s.getTermsUrl())
                 .authenticationType(s.getAuthenticationType())
-                .credentialReference(s.getCredentialReference())
+                .credentialReference(s.getCredentialReference() != null ? "********" : null) // Mask key
                 .active(s.isActive())
+                .autoPublish(s.isAutoPublish())
                 .syncFrequency(s.getSyncFrequency())
                 .rateLimitNotes(s.getRateLimitNotes())
                 .lastSyncAt(s.getLastSyncAt())

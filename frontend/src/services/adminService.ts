@@ -4,6 +4,7 @@ import {
   AuditLog,
   BusinessDocument,
   BusinessProfile,
+  CitizenDto,
   DashboardStats,
   PageResponse,
   Scheme,
@@ -144,6 +145,21 @@ export const adminService = {
     return res.data;
   },
 
+  async createSource(source: any) {
+    const res = await api.post<ApiResponse<any>>('/admin/government-sources', source);
+    return res.data;
+  },
+
+  async updateSource(id: number, source: any) {
+    const res = await api.put<ApiResponse<any>>(`/admin/government-sources/${id}`, source);
+    return res.data;
+  },
+
+  async testSourceApi(id: number) {
+    const res = await api.post<ApiResponse<any>>(`/admin/government-sources/${id}/test`);
+    return res.data;
+  },
+
   async syncSource(id: number) {
     const res = await api.post<ApiResponse<any>>(`/admin/government-sources/${id}/sync`);
     return res.data;
@@ -192,6 +208,19 @@ export const adminService = {
 
   async rejectTender(id: number) {
     const res = await api.patch<ApiResponse<Tender>>(`/admin/tenders/${id}/reject`);
+    return res.data;
+  },
+
+  // Admin Citizen Management
+  async getCitizens(query?: string, page = 0, size = 15) {
+    const res = await api.get<ApiResponse<PageResponse<CitizenDto>>>('/admin/citizens', {
+      params: { query, page, size },
+    });
+    return res.data;
+  },
+
+  async getCitizenById(id: number) {
+    const res = await api.get<ApiResponse<CitizenDto>>(`/admin/citizens/${id}`);
     return res.data;
   },
 };

@@ -28,6 +28,7 @@ public class GovernmentSourceDto {
     private String authenticationType;
     private String credentialReference;
     private boolean active;
+    private boolean autoPublish;
     private String syncFrequency;
     private String rateLimitNotes;
     private LocalDateTime lastSyncAt;

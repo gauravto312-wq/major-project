@@ -7,7 +7,8 @@ import { Badge } from '../../components/Badge';
 import { Pagination } from '../../components/Pagination';
 import { Alert } from '../../components/Alert';
 import { EmptyState } from '../../components/EmptyState';
-import { FileText, PlusCircle, Edit3, CheckCircle, Power, Archive, Sparkles } from 'lucide-react';
+import { AdminHeaderNav } from '../../components/AdminHeaderNav';
+import { FileText, PlusCircle, Edit3, CheckCircle, Power, Archive, Sparkles, ShieldCheck } from 'lucide-react';
 
 export const AdminSchemeListPage: React.FC = () => {
   const [schemesData, setSchemesData] = useState<PageResponse<Scheme> | null>(null);
@@ -82,16 +83,35 @@ export const AdminSchemeListPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900">Manage Schemes & Subsidies</h1>
-          <p className="text-xs text-slate-500">Admin scheme lifecycle control (DRAFT → PUBLISHED → INACTIVE → ARCHIVED)</p>
+    <>
+      <AdminHeaderNav />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Header Banner with Vidhan Bhawan Visual Identity */}
+      <div
+        className="relative rounded-3xl p-6 sm:p-8 text-white shadow-gov-lg overflow-hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#173B72]"
+        style={{
+          backgroundImage: "url('/assets/vidhan-bhawan.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-[#173B72]/95 via-[#173B72]/90 to-[#0F264A]/95 backdrop-blur-[1px]"></div>
+
+        <div className="relative z-10 space-y-1">
+          <span className="text-xs font-bold text-[#C89B3C] uppercase tracking-wider flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1B8354]" /> Program Registry Governance
+          </span>
+          <h1 className="text-2xl font-black text-white">Manage Schemes & Subsidies</h1>
+          <p className="text-xs text-[#F5F7FA]/90">
+            Admin scheme lifecycle control (DRAFT → PUBLISHED → INACTIVE → ARCHIVED)
+          </p>
         </div>
 
-        <Link to="/admin/schemes/create" className="btn-primary text-xs py-2.5 px-4 bg-blue-600 hover:bg-blue-700">
-          <PlusCircle className="w-4 h-4" /> Add New Scheme
-        </Link>
+        <div className="relative z-10">
+          <Link to="/admin/schemes/create" className="btn-accent text-xs py-2.5 px-4 font-bold">
+            <PlusCircle className="w-4 h-4" /> Add New Scheme
+          </Link>
+        </div>
       </div>
 
       {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
@@ -99,75 +119,83 @@ export const AdminSchemeListPage: React.FC = () => {
       {loading ? (
         <LoadingSpinner message="Fetching schemes repository..." />
       ) : schemesData && schemesData.content.length > 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6 space-y-4">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-gov overflow-hidden p-6 space-y-4">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <thead className="bg-[#F5F7FA] text-[#5E6B7D] uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
-                  <th className="py-3.5 px-4">Scheme Title</th>
-                  <th className="py-3.5 px-4">Department</th>
-                  <th className="py-3.5 px-4">Type</th>
-                  <th className="py-3.5 px-4">State</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Featured</th>
-                  <th className="py-3.5 px-4 text-right">Lifecycle Actions</th>
+                  <th className="py-3 px-4">Scheme Title</th>
+                  <th className="py-3 px-4">Type</th>
+                  <th className="py-3 px-4">State</th>
+                  <th className="py-3 px-4">Department</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-center">Featured</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {schemesData.content.map((scheme) => (
-                  <tr key={scheme.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-slate-900 max-w-xs truncate">{scheme.title}</td>
-                    <td className="py-3.5 px-4 text-slate-600">{scheme.department}</td>
-                    <td className="py-3.5 px-4 font-semibold text-blue-700">{scheme.schemeType}</td>
-                    <td className="py-3.5 px-4 text-slate-600">{scheme.state}</td>
-                    <td className="py-3.5 px-4">
-                      <Badge status={scheme.status} />
+                {schemesData.content.map((s) => (
+                  <tr key={s.id} className="hover:bg-[#F5F7FA]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-[#172033] max-w-xs">
+                      {s.title}
+                      <span className="block font-mono text-[10px] text-[#5E6B7D]">Slug: {s.slug}</span>
                     </td>
+                    <td className="py-3.5 px-4 font-semibold text-[#173B72]">{s.schemeType}</td>
+                    <td className="py-3.5 px-4 text-[#5E6B7D]">{s.state}</td>
+                    <td className="py-3.5 px-4 text-[#5E6B7D] truncate max-w-[140px]">{s.department}</td>
                     <td className="py-3.5 px-4">
+                      <Badge status={s.status} />
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
                       <button
-                        onClick={() => handleToggleFeatured(scheme.id)}
-                        className={`p-1 rounded ${scheme.featured ? 'text-amber-500 bg-amber-50' : 'text-slate-300'}`}
+                        type="button"
+                        aria-label={`Toggle featured for ${s.title}`}
+                        onClick={() => handleToggleFeatured(s.id)}
+                        className={`p-1.5 rounded-lg border transition-colors ${
+                          s.featured
+                            ? 'bg-[#FEF7E6] text-[#B7791F] border-[#F8D88E]'
+                            : 'bg-[#F5F7FA] text-slate-400 border-slate-200'
+                        }`}
                         title="Toggle Featured"
                       >
-                        <Sparkles className="w-4 h-4 fill-current" />
+                        <Sparkles className="w-3.5 h-3.5" />
                       </button>
                     </td>
                     <td className="py-3.5 px-4 text-right space-x-1.5">
                       <Link
-                        to={`/admin/schemes/${scheme.id}/edit`}
-                        className="btn-secondary py-1 px-2.5 text-xs inline-flex items-center gap-1"
-                        title="Edit Scheme"
+                        to={`/admin/schemes/${s.id}/edit`}
+                        className="inline-flex items-center gap-1 text-[#173B72] hover:text-[#2456A6] font-bold px-2 py-1 bg-[#E5EEF9] rounded text-[11px]"
                       >
-                        <Edit3 className="w-3.5 h-3.5" /> Edit
+                        <Edit3 className="w-3 h-3" /> Edit
                       </Link>
 
-                      {scheme.status !== 'PUBLISHED' && scheme.status !== 'ACTIVE' && (
+                      {s.status !== 'PUBLISHED' && (
                         <button
-                          onClick={() => handlePublish(scheme.id)}
-                          className="btn-success py-1 px-2.5 text-xs inline-flex items-center gap-1"
-                          title="Publish Scheme Live"
+                          type="button"
+                          onClick={() => handlePublish(s.id)}
+                          className="inline-flex items-center gap-1 text-[#1B8354] hover:text-[#156B43] font-bold px-2 py-1 bg-[#EBF7F0] rounded text-[11px]"
                         >
-                          <CheckCircle className="w-3.5 h-3.5" /> Publish
+                          <CheckCircle className="w-3 h-3" /> Publish
                         </button>
                       )}
 
-                      {(scheme.status === 'PUBLISHED' || scheme.status === 'ACTIVE') && (
+                      {s.status === 'PUBLISHED' && (
                         <button
-                          onClick={() => handleDeactivate(scheme.id)}
-                          className="btn-secondary py-1 px-2.5 text-xs inline-flex items-center gap-1 text-purple-700 hover:bg-purple-50"
-                          title="Deactivate Scheme"
+                          type="button"
+                          onClick={() => handleDeactivate(s.id)}
+                          className="inline-flex items-center gap-1 text-[#B7791F] hover:text-[#975A16] font-bold px-2 py-1 bg-[#FEF7E6] rounded text-[11px]"
                         >
-                          <Power className="w-3.5 h-3.5" /> Deactivate
+                          <Power className="w-3 h-3" /> Deactivate
                         </button>
                       )}
 
-                      {scheme.status !== 'ARCHIVED' && (
+                      {s.status !== 'ARCHIVED' && (
                         <button
-                          onClick={() => handleArchive(scheme.id)}
-                          className="btn-secondary py-1 px-2 text-xs inline-flex items-center gap-1 text-slate-500"
-                          title="Archive Scheme"
+                          type="button"
+                          onClick={() => handleArchive(s.id)}
+                          className="inline-flex items-center gap-1 text-[#5E6B7D] hover:text-[#172033] font-bold px-2 py-1 bg-slate-100 rounded text-[11px]"
                         >
-                          <Archive className="w-3.5 h-3.5" />
+                          <Archive className="w-3 h-3" /> Archive
                         </button>
                       )}
                     </td>
@@ -182,12 +210,13 @@ export const AdminSchemeListPage: React.FC = () => {
             totalPages={schemesData.totalPages}
             totalElements={schemesData.totalElements}
             pageSize={schemesData.pageSize}
-            onPageChange={(newPage) => setPage(newPage)}
+            onPageChange={(p) => setPage(p)}
           />
         </div>
       ) : (
-        <EmptyState title="No Schemes Found" description="No government schemes currently exist in the database." />
+        <EmptyState title="No Schemes Found" description="Click 'Add New Scheme' to create a manual scheme record." />
       )}
-    </div>
+      </div>
+    </>
   );
 };

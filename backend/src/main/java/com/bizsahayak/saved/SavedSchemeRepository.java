@@ -12,4 +12,5 @@ public interface SavedSchemeRepository extends JpaRepository<SavedScheme, Long> 
     Optional<SavedScheme> findByUserIdAndSchemeId(Long userId, Long schemeId);
     boolean existsByUserIdAndSchemeId(Long userId, Long schemeId);
     void deleteByUserIdAndSchemeId(Long userId, Long schemeId);
+    long countByUserId(Long userId);
 }

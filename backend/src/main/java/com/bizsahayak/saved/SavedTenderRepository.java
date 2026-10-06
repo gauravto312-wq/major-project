@@ -12,4 +12,5 @@ public interface SavedTenderRepository extends JpaRepository<SavedTender, Long> 
     Optional<SavedTender> findByUserIdAndTenderId(Long userId, Long tenderId);
     boolean existsByUserIdAndTenderId(Long userId, Long tenderId);
     void deleteByUserIdAndTenderId(Long userId, Long tenderId);
+    long countByUserId(Long userId);
 }

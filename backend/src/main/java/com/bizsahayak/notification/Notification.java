@@ -2,6 +2,7 @@ package com.bizsahayak.notification;
 
 import com.bizsahayak.common.BaseEntity;
 import com.bizsahayak.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class Notification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -29,7 +31,15 @@ public class Notification extends BaseEntity {
     private String message;
 
     @Column(length = 50)
-    private String type; // e.g. "VERIFICATION", "SCHEME_UPDATE", "TENDER_DEADLINE", "GENERAL"
+    private String type; // e.g. "RECOMMENDATION", "VERIFICATION_APPROVED", "VERIFICATION_REJECTED", "CORRECTION_REQUIRED", "APPLICATION_UPDATE"
+
+    @Column(length = 50)
+    private String entityType; // e.g. "SCHEME", "BUSINESS", "APPLICATION"
+
+    private Long entityId;
+
+    @Column(length = 255)
+    private String route; // e.g. "/schemes/pmfme-food-processing-scheme" or "/business/profile"
 
     @Column(length = 255)
     private String actionUrl;
